@@ -15,10 +15,11 @@ If *timer_gettime()* link errror, add *-lz -lrt* to Makefile.target, line 37:
 
     LIBS+=-lz -lrt -lm
 
-If undefined reference to *thumips_flash_init*, add *thumips_flash.o* to Makefile.objs, line 244:
-
-    hw-obj-$(CONFIG_PIIX4) += piix4.o thumips_flash.o
-
-AND THIS ISSUE IS NOT SOLVED. FINDING SOLUTIONS...
-
 If *error: field ‘info’ has incomplete type*, replace *struct siginfo* with *siginfo_t* in linux-user/signal.c, line 3247, 3466, 3468.
+
+After the make FAILED, execute the following command:
+
+    cd mipsel-softmmu
+    make
+
+And you will get *qemu-system-mipsel* here. (I don't know whether it is runnable.)
