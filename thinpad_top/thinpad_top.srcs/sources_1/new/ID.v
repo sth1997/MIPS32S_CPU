@@ -1,0 +1,335 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 2018/07/04 16:25:40
+// Design Name: 
+// Module Name: ID
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+`include "CONST.v"
+
+module ID(
+    input wire clk, 
+    input wire rst,
+    
+    input wire[`InstAddrBus] pc_input,				// 32bit, address
+    input wire[`InstBus] inst_input,
+
+    input wire[`RegBus] reg1_data_input,
+    input wire[`RegBus] reg2_data_input,
+
+    input wire ex_wreg_input,
+    input wire[`RegAddrBus] ex_waddr_input,
+    input wire[`RegBus] ex_wdata_input,
+    
+    input wire mem_wreg_input,
+    input wire[`RegAddrBus] mem_waddr_input,
+    input wire[`RegBus] mem_wdata_input,
+
+    input wire is_in_delayslot_input,
+
+    input wire[`AluOpBus] ex_aluop_input,
+
+    output reg reg1_read_output,         
+    output reg reg2_read_output,     
+    output reg[`RegAddrBus] reg1_addr_output,        
+    output reg[`RegAddrBus] reg2_addr_output,           
+    
+    output reg[`AluOpBus] aluop_output,            
+    output reg[`AluSelBus] alusel_output,        
+    output reg[`RegBus] reg1_output,            
+    output reg[`RegBus] reg2_output,
+    output reg[`RegAddrBus] waddr_output,               
+    output reg wreg_output,           
+
+    output reg next_inst_in_delayslot_output,
+
+    output reg branch_flag_output,
+    output reg[`RegBus] branch_target_addr_output,
+    output reg[`RegBus] link_addr_output,
+    output reg is_in_delayslot_output,
+
+    output wire[`RegBus] inst_output,
+    output wire bubble_require,
+
+
+    //input wire is_tlbl_inst,
+    //output wire[31: 0] excepttype_output,
+    output wire[`RegBus] current_inst_addr_output
+    );
+    reg bubble_require_wait_for_reg1_load;
+    reg bubble_require_wait_for_reg2_load;
+    wire pre_inst_is_load;
+    reg[`RegBus] imm;
+    wire[`RegBus] branch_addr;
+    
+    assign current_inst_addr_output = pc_input;
+    
+    assign pre_inst_is_load = ((ex_aluop_input == `EXE_LB_OP) || (ex_aluop_input == `EXE_LBU_OP) ||(ex_aluop_input == `EXE_LHU_OP) || (ex_aluop_input == `EXE_LW_OP))? 1'b1: 1'b0;
+    assign bubble_require = bubble_require_wait_for_reg1_load | bubble_require_wait_for_reg2_load;
+    
+    assign inst_output = inst_input;
+    assign branch_addr = (pc_input + 4) + {{14{inst_input[15]}}, inst_input[15: 0], 2'b00};
+    
+    always @ (*) 
+        begin
+            if(rst == `RstEnable) 
+                begin
+                    reg1_output <= `ZeroWord;
+                    bubble_require_wait_for_reg1_load <= `NoStop;
+                end 
+            else if(pre_inst_is_load == 1'b1 && ex_waddr_input == reg1_addr_output && reg1_read_output == 1'b1 ) 
+                begin
+                    bubble_require_wait_for_reg1_load <= `Stop;
+                end
+            else 
+                begin
+                    bubble_require_wait_for_reg1_load <= `NoStop;
+                    if (reg1_read_output == 1'b1)
+                        begin
+                            if((ex_wreg_input == 1'b1) && (ex_waddr_input == reg1_addr_output)) 
+                                begin
+                                    reg1_output <= ex_wdata_input;
+                                end
+                            else if((mem_wreg_input == 1'b1) && (mem_waddr_input == reg1_addr_output)) 
+                                begin
+                                    reg1_output <= mem_wdata_input;
+                                end
+                            else
+                                begin
+                                    reg1_output <= reg1_data_input;
+                                end 
+                        end
+                    else if(reg1_read_output == 1'b0) 
+                        begin
+                          reg1_output <= imm;
+                        end 
+                    else 
+                        begin
+                            reg1_output <= `ZeroWord;
+                        end
+                end
+        end
+    
+    always @ (*) begin
+        if(rst == `RstEnable) 
+            begin
+                reg2_output <= `ZeroWord;
+                bubble_require_wait_for_reg2_load <= `NoStop;
+            end 
+        else if(pre_inst_is_load == 1'b1 && ex_waddr_input == reg2_addr_output && reg2_read_output == 1'b1 ) 
+            begin
+                bubble_require_wait_for_reg2_load <= `Stop;
+            end
+        else 
+            begin
+                bubble_require_wait_for_reg2_load <= `NoStop;
+                if(reg2_read_output == 1'b1)
+                    begin
+                        if((ex_wreg_input == 1'b1) && (ex_waddr_input == reg2_addr_output)) 
+                            begin
+                                reg2_output <= ex_wdata_input;
+                            end
+                        else if((mem_wreg_input == 1'b1) && (mem_waddr_input == reg2_addr_output)) 
+                            begin
+                                reg2_output <= mem_wdata_input;
+                            end
+                        else 
+                            begin
+                              reg2_output <= reg2_data_input;
+                            end
+                    end
+                else if(reg2_read_output == 1'b0) 
+                    begin
+                      reg2_output <= imm;
+                    end 
+                else 
+                    begin
+                        reg2_output <= `ZeroWord;
+                    end
+            end
+    end
+
+    always @ (*) begin
+        if(rst == `RstEnable) 
+            begin
+                is_in_delayslot_output <= `NotInDelaySlot;
+            end 
+        else 
+            begin
+                is_in_delayslot_output <= is_in_delayslot_input;       
+            end
+    end
+    
+    always @ (*) 
+        begin	
+            if (rst == `RstEnable) 
+                begin
+                    aluop_output <= `EXE_NOP_OP;
+                    alusel_output <= `EXE_RES_NOP;
+                    waddr_output <= `NOPRegAddr;
+                    wreg_output <= `WriteDisable;
+                    reg1_read_output <= 1'b0;
+                    reg2_read_output <= 1'b0;
+                    reg1_addr_output <= `NOPRegAddr;
+                    reg2_addr_output <= `NOPRegAddr;
+                    imm <= `ZeroWord; 
+                    link_addr_output <= `ZeroWord;
+                    branch_target_addr_output <= `ZeroWord;
+                    branch_flag_output <= `NotBranch;
+                    next_inst_in_delayslot_output <= `NotInDelaySlot;
+                end 
+            else 
+                begin
+                    aluop_output <= `EXE_NOP_OP;
+                    alusel_output <= `EXE_RES_NOP;
+                    waddr_output <= inst_input[15:11];
+                    wreg_output <= `WriteDisable;  
+                    reg1_read_output <= 1'b0;
+                    reg2_read_output <= 1'b0;
+                    reg1_addr_output <= inst_input[25:21];
+                    reg2_addr_output <= inst_input[20:16];
+                    imm <= `ZeroWord;
+                    link_addr_output <= `ZeroWord;
+                    branch_target_addr_output <= `ZeroWord;
+                    branch_flag_output <= `NotBranch;
+                    next_inst_in_delayslot_output <= `NotInDelaySlot;
+                    case (inst_input[31:26])
+                        `EXE_SPECIAL_INST:
+                            begin
+                                case (inst_input[10:6])
+                                    5'b00000:
+                                        begin
+                                            case (inst_input[5:0])
+                                                `EXE_OR:
+                                                    begin
+                                                        wreg_output <= `WriteEnable;
+                                                        aluop_output <= `EXE_OR_OP;
+                                                        alusel_output <= `EXE_RES_LOGIC;
+                                                        reg1_read_output <= 1'b1;
+                                                        reg2_read_output <= 1'b1;
+                                                    end
+                                                `EXE_AND:
+                                                    begin
+                                                        wreg_output <= `WriteEnable;
+                                                        aluop_output <= `EXE_AND_OP;
+                                                        alusel_output <= `EXE_RES_LOGIC;
+                                                        reg1_read_output <= 1'b1;
+                                                        reg2_read_output <= 1'b1;
+                                                    end
+                                                `EXE_XOR:
+                                                    begin
+                                                        wreg_output <= `WriteEnable;
+                                                        aluop_output <= `EXE_XOR_OP;
+                                                        alusel_output <= `EXE_RES_LOGIC;
+                                                        reg1_read_output <= 1'b1;
+                                                        reg2_read_output <= 1'b1;
+                                                    end
+                                                `EXE_ADDU: 
+                                                    begin
+                                                        wreg_output <= `WriteEnable;
+                                                        aluop_output <= `EXE_ADDU_OP;
+                                                        alusel_output <= `EXE_RES_ARITHMETIC;
+                                                        reg1_read_output <= 1'b1;
+                                                        reg2_read_output <= 1'b1;
+                                                    end
+                                                `EXE_JR: 
+                                                    begin
+                                                        wreg_output <= `WriteDisable;
+                                                        aluop_output <= `EXE_JR_OP;
+                                                        alusel_output <= `EXE_RES_JUMP_BRANCH;
+                                                        reg1_read_output <= 1'b1;
+                                                        reg2_read_output <= 1'b0;
+                                                        
+                                                        link_addr_output <= `ZeroWord;
+                                                        branch_target_addr_output <= reg1_output;
+                                                        branch_flag_output <= `Branch;
+                                                        next_inst_in_delayslot_output <= `InDelaySlot; 
+                                                    end
+                                            endcase //case (inst_input[5:0])
+                                        end
+                                endcase //case (inst_input[10:6])
+                            end
+                        `EXE_ADDIU:
+                            begin                
+                                wreg_output <= `WriteEnable;        
+                                aluop_output <= `EXE_ADDIU_OP;                
+                                alusel_output <= `EXE_RES_ARITHMETIC; 
+                                reg1_read_output <= 1'b1;                
+                                reg2_read_output <= 1'b0;          
+                                imm <= {{16{inst_input[15]}}, inst_input[15:0]};        
+                                waddr_output <= inst_input[20:16];   
+                            end
+                        `EXE_ANDI: 			
+                            begin                //ANDI
+                                wreg_output <= `WriteEnable;        
+                                aluop_output <= `EXE_AND_OP;
+                                alusel_output <= `EXE_RES_LOGIC; 
+                                reg1_read_output <= 1'b1;    
+                                reg2_read_output <= 1'b0;          
+                                imm <= {16'h0, inst_input[15:0]};
+                                waddr_output <= inst_input[20:16];
+                            end
+                        `EXE_BEQ: 
+                            begin
+                                wreg_output <= `WriteDisable;
+                                aluop_output <= `EXE_BEQ_OP;
+                                alusel_output <= `EXE_RES_JUMP_BRANCH;
+                                reg1_read_output <= 1'b1;
+                                reg2_read_output <= 1'b1;
+                                if(reg1_output == reg2_output) 
+                                    begin
+                                        link_addr_output <= `ZeroWord;
+                                        branch_target_addr_output <= branch_addr;
+                                        branch_flag_output <= `Branch;
+                                        next_inst_in_delayslot_output <= `InDelaySlot;
+                                    end
+                            end
+                        `EXE_BGTZ: 
+                            begin
+                                wreg_output <= `WriteDisable;
+                                aluop_output <= `EXE_BGTZ_OP;
+                                alusel_output <= `EXE_RES_JUMP_BRANCH;
+                                reg1_read_output <= 1'b1;
+                                reg2_read_output <= 1'b0;
+                                if((reg1_output[31] == 1'b0) && (reg1_output != `ZeroWord)) 
+                                    begin
+                                        link_addr_output <= `ZeroWord;
+                                        branch_target_addr_output <= branch_addr;
+                                        branch_flag_output <= `Branch;
+                                        next_inst_in_delayslot_output <= `InDelaySlot;
+                                    end
+                            end
+                        `EXE_BNE: 
+                            begin
+                                wreg_output <= `WriteDisable;
+                                aluop_output <= `EXE_BNE_OP;
+                                alusel_output <= `EXE_RES_JUMP_BRANCH;
+                                reg1_read_output <= 1'b1;
+                                reg2_read_output <= 1'b1;
+                                if(reg1_output != reg2_output)
+                                    begin
+                                        link_addr_output <= `ZeroWord;
+                                        branch_target_addr_output <= branch_addr;
+                                        branch_flag_output <= `Branch;
+                                        next_inst_in_delayslot_output <= `InDelaySlot;
+                                    end
+                            end
+                        
+                    endcase //case (inst_input[31:26])
+                end
+        end
+    
+endmodule
