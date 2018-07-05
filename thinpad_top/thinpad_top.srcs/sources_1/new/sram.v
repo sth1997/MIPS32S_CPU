@@ -49,7 +49,8 @@ module sram_top(
 	assign extram_data = extram_oe ? data_to_write : {32{1'bz}};
 	assign baseram_addr = wb_addr_i[21:2];
 	assign extram_addr = wb_addr_i[21:2];
-	assign baseram_be = 
+	assign baseram_be = 4'b0000;
+	assign extram_be = 4'b0000;
 
 	reg [2:0] state;
 	localparam IDLE = 3'b000;
