@@ -324,7 +324,7 @@ module CPU_TOP (
         .mem_current_inst_addr(mem_current_inst_addr_input)    
 
     );
-/*
+
     mem mem0(
         .rst(rst),
         .waddr_input(mem_waddr_input),
@@ -333,8 +333,6 @@ module CPU_TOP (
         .aluop_input(mem_aluop_input),
         .mem_addr_input(mem_mem_addr_input),
         .reg2_input(mem_reg2_input),
-        .is_in_delayslot_input(mem_is_in_delayslot_input),
-        .current_inst_addr_input(mem_current_inst_addr_input),    
         
         .mem_data_input(ram_data_input),    
       
@@ -346,20 +344,9 @@ module CPU_TOP (
 
         .waddr_output(mem_waddr_output),
         .wreg_output(mem_wreg_output),
-        .wdata_output(mem_wdata_output),
-        .is_tlb_modify(mmu_is_tlb_modify),
-        .is_tlbl_data(mmu_is_tlbl_data),
-        .is_tlbs(mmu_is_tlbs),
-        .is_in_delayslot_output(mem_is_in_delayslot_output),
-        .current_inst_addr_output(mem_current_inst_addr_output),
-        .unaligned_addr_output(mem_unliagned_addr_output),
-        .badvaddr_input(mmu_badvaddr),
-        .badvaddr_output(cp0_badvaddr),
-        .is_save_inst(mmu_we)
-
-
+        .wdata_output(mem_wdata_output)
     );
-*/
+
     MEM2WB mem2wb0(
         .clk(clk),
         .rst(rst),
