@@ -22,7 +22,7 @@
 
 `include "CONST.v"
 
-module ex_mem(
+module EX2MEM(
 
 	input wire clk,
 	input wire rst,
