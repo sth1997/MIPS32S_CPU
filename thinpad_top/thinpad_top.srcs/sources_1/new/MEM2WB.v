@@ -5,7 +5,7 @@ module MEM2WB(
 	input wire clk,
 	input wire rst,
 
-	input wire[5: 0] stall,
+	input wire[5: 0] bubble_flag,
 
 	// from mem	
 	input wire[`RegAddrBus] mem_waddr,
@@ -29,13 +29,13 @@ module MEM2WB(
                     wb_wreg <= `WriteDisable;
                     wb_wdata <= `ZeroWord;	
                 end 
-            else if(stall[4] == `Stop && stall[5] == `NoStop) 
+            else if(bubble_flag[4] == `Stop && bubble_flag[5] == `NoStop) 
                 begin
                     wb_waddr <= `NOPRegAddr;
                     wb_wreg <= `WriteDisable;
                     wb_wdata <= `ZeroWord; 	  
                 end 
-            else if(stall[4] == `NoStop) 
+            else if(bubble_flag[4] == `NoStop) 
                 begin
                     wb_waddr <= mem_waddr;
                     wb_wreg <= mem_wreg;

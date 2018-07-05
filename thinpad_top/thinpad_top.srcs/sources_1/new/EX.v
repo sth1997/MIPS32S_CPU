@@ -27,7 +27,7 @@ module EX(
 	
 	output wire[`RegBus] current_inputnst_addr_output,
 	
-	output wire is_inputn_delayslot_output
+	output wire is_in_delayslot_output
 );
 
 	reg[`RegBus] logicout;
@@ -40,7 +40,7 @@ module EX(
 	wire[`RegBus] result_sum;
 
 	assign current_inputnst_addr_output = current_inst_addr_input;
-	assign is_inputn_delayslot_output = is_in_delayslot_input;
+	assign is_in_delayslot_output = is_in_delayslot_input;
 
 
 	always @ (*) 

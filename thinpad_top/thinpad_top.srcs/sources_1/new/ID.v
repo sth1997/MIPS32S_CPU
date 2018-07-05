@@ -21,7 +21,6 @@
 `include "CONST.v"
 
 module ID(
-    input wire clk, 
     input wire rst,
     
     input wire[`InstAddrBus] pc_input,				// 32bit, address
