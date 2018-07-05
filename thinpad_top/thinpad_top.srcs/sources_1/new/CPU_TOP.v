@@ -368,22 +368,21 @@ module CPU_TOP (
 
 
     wire[31: 0] exc_vector_addr;
-/*
+
     ctrl ctrl0(
         .rst(rst),
 
-        .bubblereq_from_id(bubblereq_from_id),
-        .bubblereq_from_if(bubblereq_from_if),
-        .bubblereq_from_mem(bubblereq_from_mem),
+        .stallreq_from_id(bubblereq_from_id),
+        .stallreq_from_if(bubblereq_from_if),
+        .stallreq_from_mem(bubblereq_from_mem),
 
-        .bubble(bubble),
+        .stall(bubble),
         .flush(flush),  
 
-        .exc_vec_addr_input(exc_vector_addr),
         .new_pc(new_pc)
 
     );
-
+/*
     wire cpu_ram_ce_output;
     assign cpu_ram_ce_output = ram_ce_output;
 

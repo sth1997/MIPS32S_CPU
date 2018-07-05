@@ -1,4 +1,4 @@
-`include "defines.v"
+`include "CONST.v"
 
 module ctrl(
 
