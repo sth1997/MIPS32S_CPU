@@ -11,12 +11,12 @@ module sram_top(
     input  wire    [31: 0] wb_data_i,
     output reg [31: 0] wb_data_o,
 
-	//CPLD串口控制器信号
-    output wire uart_rdn,         //读串口信号，低有效
-    output wire uart_wrn,         //写串口信号，低有效
-    input wire uart_dataready,    //串口数据准备好
-    input wire uart_tbre,         //发送数据标志
-    input wire uart_tsre,         //数据发送完毕标志
+	//CPLD串口控制器信�?
+    output reg uart_rdn,         //读串口信号，低有�?
+    output reg uart_wrn,         //写串口信号，低有�?
+    input wire uart_dataready,    //串口数据准备�?
+    input wire uart_tbre,         //发�?�数据标�?
+    input wire uart_tsre,         //数据发�?�完毕标�?
 
     output wire [19:0] baseram_addr,
 	inout wire [31:0] baseram_data,
