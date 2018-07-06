@@ -26,7 +26,7 @@ module CPU_TOP (
 	input wire rst,
 	//output wire[31:0]             debug_led,
 	
- 	input wire[7: 0] int_i,
+ 	//input wire[7: 0] int_i,
 
  	input wire[31: 0] regfile_reg_sel,
 	output wire[31: 0] regfile_reg_out,
@@ -53,7 +53,7 @@ module CPU_TOP (
 	
 	output wire ram_ce_output,
 
-	output wire timer_int_output
+	//output wire timer_int_output
 
 );
     wire[`InstAddrBus] pc;
