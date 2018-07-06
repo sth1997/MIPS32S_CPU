@@ -11,12 +11,12 @@ module sram_top(
     input  wire    [31: 0] wb_data_i,
     output reg [31: 0] wb_data_o,
 
-	//CPLD串口控制器信�?
-    output reg uart_rdn,         //读串口信号，低有�?
-    output reg uart_wrn,         //写串口信号，低有�?
-    input wire uart_dataready,    //串口数据准备�?
-    input wire uart_tbre,         //发�?�数据标�?
-    input wire uart_tsre,         //数据发�?�完毕标�?
+	//CPLD串口控制器信�?
+    output reg uart_rdn,         //读串口信号，低有�?
+    output reg uart_wrn,         //写串口信号，低有�?
+    input wire uart_dataready,    //串口数据准备�?
+    input wire uart_tbre,         //发�?�数据标�?
+    input wire uart_tsre,         //数据发�?�完毕标�?
 
     output wire [19:0] baseram_addr,
 	inout wire [31:0] baseram_data,
@@ -29,7 +29,8 @@ module sram_top(
 	output wire [3:0] extram_be,
 	output wire extram_ce,
 	output wire extram_oe,
-	output wire extram_we
+	output wire extram_we,
+	output wire [7:0] debug_data_output
 	);
 	
 	// Wishbone read/write accesses
@@ -40,7 +41,6 @@ module sram_top(
 
 	wire ram_selector = wb_addr_i[22];		//0-base 1-extra
 	reg ram_oe = 1, ram_we = 1, ram_ce = 1;//低有效，0-enable
-
     //低有效，0-enable
 	assign baseram_ce = ~(wb_acc & ~ram_selector & ~ram_ce);
 	assign extram_ce = ~(wb_acc & ram_selector & ~ram_ce);
@@ -72,6 +72,11 @@ module sram_top(
 	localparam WRITE_TO_COMP_FINISH = 4'b1111;
 	localparam COMP_STATE_READ = 4'b1000;
 
+    assign debug_data_output[3:0] = state;
+    assign debug_data_output[4] = wb_rd;
+    assign debug_data_output[5] = wb_wr;
+    assign debug_data_output[6] = wb_acc;
+    assign debug_data_output[7] = rst_i;
 	//all select
 	wire all_select = wb_sel_i[3] & wb_sel_i[2] & wb_sel_i[1] & wb_sel_i[0];
 

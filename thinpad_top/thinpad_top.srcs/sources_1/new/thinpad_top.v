@@ -120,7 +120,18 @@ module thinpad_top(
     wire[7:0] number;
     SEG7_LUT segL(.oSEG1(dpy0), .iDIG(number[3:0])); //dpy0是低位数码管
     SEG7_LUT segH(.oSEG1(dpy1), .iDIG(number[7:4])); //dpy1是高位数码管
-
+    /*
+    always@(posedge clock_btn or posedge reset_btn) begin
+        if(reset_btn)begin //复位按下，设置LED和数码管为初始�??
+            number<=0;
+            led_bits <= 16'h1;
+        end
+        else begin //每次按下时钟按钮，数码管显示值加1，LED循环左移
+            number <= number+1;
+            led_bits <= {led_bits[14:0],led_bits[15]};
+        end
+    end
+*/
 CPU_TOP CPU_TOP0(
         .clk(clk_o),
         .rst(rst),
@@ -147,8 +158,10 @@ CPU_TOP CPU_TOP0(
         
         .ram_ce_output(),
         
-        .debug_pc_output(led_bits),
-        .debug_data_output(number)
+        .debug_pc_output(led_bits)
+        //.debug_data_output(number)
+        //.debug_pc_output(),
+        //.debug_data_output()
     );
     
 sram_top sram_top0(
@@ -179,7 +192,8 @@ sram_top sram_top0(
         .uart_wrn(uart_wrn),       
         .uart_dataready(uart_dataready),   
         .uart_tbre(uart_tbre),     
-        .uart_tsre(uart_tsre)
+        .uart_tsre(uart_tsre),
+        .debug_data_output(number)
     );
     
 //wb_conmax
@@ -300,17 +314,17 @@ wb_conmax_top wb_conmax_top0(
 
     // Slave 0 Interface: ram
 
-    .s0_data_i(sram_data_i), 
-    .s0_data_o(sram_data_o), 
-    .s0_addr_o(sram_addr_o), 
-    .s0_sel_o(sram_sel_o), 
-    .s0_we_o(sram_we_o), 
-    .s0_cyc_o(sram_cyc_o),
+    .s8_data_i(sram_data_i), 
+    .s8_data_o(sram_data_o), 
+    .s8_addr_o(sram_addr_o), 
+    .s8_sel_o(sram_sel_o), 
+    .s8_we_o(sram_we_o), 
+    .s8_cyc_o(sram_cyc_o),
     
-    .s0_stb_o(sram_stb_o), 
-    .s0_ack_i(sram_ack_i), 
-    .s0_err_i(1'b0), 
-    .s0_rty_i(1'b0),
+    .s8_stb_o(sram_stb_o), 
+    .s8_ack_i(sram_ack_i), 
+    .s8_err_i(1'b0), 
+    .s8_rty_i(1'b0),
 
     
 
@@ -415,17 +429,17 @@ wb_conmax_top wb_conmax_top0(
 
     // Slave 8 Interface
     
-    .s8_data_i(), 
-    .s8_data_o(), 
-    .s8_addr_o(), 
-    .s8_sel_o(), 
-    .s8_we_o(), 
-    .s8_cyc_o(),
+    .s0_data_i(), 
+    .s0_data_o(), 
+    .s0_addr_o(), 
+    .s0_sel_o(), 
+    .s0_we_o(), 
+    .s0_cyc_o(),
     
-    .s8_stb_o(), 
-    .s8_ack_i(1'b0), 
-    .s8_err_i(1'b0), 
-    .s8_rty_i(1'b0),
+    .s0_stb_o(), 
+    .s0_ack_i(1'b0), 
+    .s0_err_i(1'b0), 
+    .s0_rty_i(1'b0),
 
     // Slave 9 Interface
     
