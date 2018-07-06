@@ -23,3 +23,44 @@ After the make FAILED, execute the following command:
     make
 
 And you will get *qemu-system-mipsel* here. (I don't know whether it is runnable.)
+
+#### UCORE-THUMIPS Setup
+
+Better to keep the git repo next to the *qemu-thumips* repo.
+
+Here I finally give up compiling gcc, and turned to auto-install.
+
+    sudo apt-get install linux-libc-dev-mips-cross libc6-mips-cross libc6-dev-mips-cross binutils-mips-linux-gnu gcc-mips-linux-gnu g++-mips-linux-gnu
+
+After that, we use mips-linux-gnu-XXX, while the origin author of ucore-thumips used mips-sde-elf-XXX, so we replace the following lines:
+
+thumips-cc, line 4:
+
+    GCC_PREFIX="mips-linux-gnu-"
+
+disasm.py, line 9:
+
+    OBJDUMP='mips-linux-gnu-objdump'
+
+Makefile.gcc, line 8:
+
+    GCCPREFIX:=mips-linux-gnu-
+    # And make sure to remove the next line
+
+check-delay-slot.py, line 12:
+    
+    OBJDUMP='mips-linux-gnu-objdump'
+
+Makefile, line 9:
+
+    GCCPREFIX := mips-linux-gnu-
+
+And if you want to use other versions of mips gcc/as/objdump/etc, replace the previous lines with the prefix of your library.
+
+Finally, change *run* with the correct location of *qemu-system-mipsel*, as for mine, it's
+
+    ../qemu-thumips/mipsel-softmmu/qemu-system-mipsel -M mipssim -m 32M -serial stdio -bios boot/loader.bin
+
+Then the ucore will be able to compile. However, several ops are not supported in our default thumips-insn.txt, so we add them:
+
+    //TODO
