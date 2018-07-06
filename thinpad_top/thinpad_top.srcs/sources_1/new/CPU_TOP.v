@@ -31,8 +31,8 @@ module CPU_TOP (
  	input wire[31: 0] regfile_reg_sel,
 	output wire[31: 0] regfile_reg_out,
 
-	input wire[`RegBus] iwishbone_data_i,
-	input wire iwishbone_ack_i,
+	input wire[`RegBus] iwishbone_data_input,
+	input wire iwishbone_ack_input,
 	output wire[`RegBus] iwishbone_addr_output,
 	output wire[`RegBus] iwishbone_data_output,
 	output wire iwishbone_we_output,
@@ -40,7 +40,7 @@ module CPU_TOP (
 	output wire iwishbone_stb_output,
 	output wire iwishbone_cyc_output, 
 	
-	input wire[`RegBus] dwishbone_data_i,
+	input wire[`RegBus] dwishbone_data_input,
 	input wire dwishbone_ack_input,
 	output wire[`RegBus] dwishbone_addr_output,
 	output wire[`RegBus] dwishbone_data_output,
@@ -55,7 +55,7 @@ module CPU_TOP (
 
 	output wire timer_int_output
 
-    );
+);
     wire[`InstAddrBus] pc;
     wire[`InstBus] inst_input;
     wire[`InstAddrBus] id_pc_input;
@@ -382,7 +382,7 @@ module CPU_TOP (
         .new_pc(new_pc)
 
     );
-/*
+
     wire cpu_ram_ce_output;
     assign cpu_ram_ce_output = ram_ce_output;
 
@@ -390,7 +390,7 @@ module CPU_TOP (
         .clk(clk),
         .rst(rst),
     
-        .bubble_input(bubble),
+        .stall_input(bubble),
         .flush_input(flush),
 
     
@@ -410,7 +410,7 @@ module CPU_TOP (
         .wishbone_stb_output(dwishbone_stb_output),
         .wishbone_cyc_output(dwishbone_cyc_output),
 
-        .bubblereq(bubblereq_from_mem)           
+        .stallreq(bubblereq_from_mem)           
     
     );
 
@@ -420,7 +420,7 @@ module CPU_TOP (
         .clk(clk),
         .rst(rst),
     
-        .bubble_input(bubble),
+        .stall_input(bubble),
         .flush_input(flush),
     
         .cpu_ce_input(rom_ce),
@@ -439,8 +439,8 @@ module CPU_TOP (
         .wishbone_stb_output(iwishbone_stb_output),
         .wishbone_cyc_output(iwishbone_cyc_output),
 
-        .bubblereq(bubblereq_from_if)           
+        .stallreq(bubblereq_from_if)           
     
     );
-    */
+
 endmodule
