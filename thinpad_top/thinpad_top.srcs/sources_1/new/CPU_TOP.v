@@ -157,7 +157,7 @@ module CPU_TOP (
             .branch_target_address_input(branch_target_addr),
             .flush_flag(flush),
             .new_PC_address(new_pc),
-            .PC_out(pc),
+            .PC_output(pc),
             .chip_enable_flag(rom_ce_output)
                 
     );
@@ -262,8 +262,7 @@ module CPU_TOP (
         .ex_link_addr(ex_link_addr_input),
         .ex_is_in_delayslot(ex_is_in_delayslot_input),
         .is_in_delayslot_output(is_in_delayslot_input),    
-        .ex_inst(ex_inst_input),
-        .ex_current_inst_addr(ex_current_inst_addr_input)    
+        .ex_inst(ex_inst_input)
 
     );        
     
@@ -300,7 +299,7 @@ module CPU_TOP (
         .rst(rst),
 
         .bubble_notice(bubble),
-        .flush(flush),
+        .flush_flag(flush),
           
         .ex_waddr(ex_waddr_output),
         .ex_wreg(ex_wreg_output),

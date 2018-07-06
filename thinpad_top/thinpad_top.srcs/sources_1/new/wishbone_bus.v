@@ -1,4 +1,4 @@
-`include "defines.v"
+`include "CONST.v"
 
 `define WB_IDLE 2'b00
 `define WB_BUSY 2'b01
