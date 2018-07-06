@@ -27,7 +27,7 @@ module IF_PC_Reg(
     input wire branch_flag,
     input wire[`RegBus] branch_target_address_input,
     input wire flush_flag,
-    input wire new_PC_address,
+    input wire [`RegBus] new_PC_address,
     
     output reg[`RegBus] PC_output,
     output reg[`RegBus] chip_enable_flag
