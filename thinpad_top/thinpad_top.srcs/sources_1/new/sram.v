@@ -13,13 +13,13 @@ module sram_top(
 
     output wire [19:0] baseram_addr,
 	inout wire [31:0] baseram_data,
-	output wire baseram_be,
+	output wire [3:0] baseram_be,
 	output wire baseram_ce,
 	output wire baseram_oe,
 	output wire baseram_we,
 	output wire [19:0] extram_addr,
 	inout wire [31:0] extram_data,
-	output wire extram_be,
+	output wire [3:0] extram_be,
 	output wire extram_ce,
 	output wire extram_oe,
 	output wire extram_we
