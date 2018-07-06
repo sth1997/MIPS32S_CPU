@@ -80,6 +80,51 @@ module thinpad_top(
     output wire video_de           //行数据有效信号，用于区分消隐区
 );
 
+    //inst wb
+    wire [31:0] inst_data_i;
+    wire [31:0] inst_data_o;
+    wire [31:0] inst_addr_i;
+    wire [3:0] inst_sel_i;
+    wire inst_we_i;
+    wire inst_cyc_i;
+    wire inst_stb_i;
+    wire inst_ack_o;
+    //data wb
+    wire [31:0] data_data_i;
+    wire [31:0] data_data_o;
+    wire [31:0] data_addr_i;
+    wire [3:0] data_sel_i;
+    wire data_we_i;
+    wire data_cyc_i;
+    wire data_stb_i;
+    wire data_ack_o;
+
+CPU_TOP CPU_TOP0(
+        .clk(clk_o),
+        .rst(rst),
+    
+        .rom_ce_output(),
+        
+        .iwishbone_data_input(inst_data_o),
+        .iwishbone_ack_input(inst_ack_o),
+        .iwishbone_addr_output(inst_addr_i),
+        .iwishbone_data_output(inst_data_i),
+        .iwishbone_we_output(inst_we_i),
+        .iwishbone_sel_output(inst_sel_i),
+        .iwishbone_stb_output(inst_stb_i),
+        .iwishbone_cyc_output(inst_cyc_i),
+
+        .dwishbone_data_input(data_data_o),
+        .dwishbone_ack_input(data_ack_o),
+        .dwishbone_addr_output(data_addr_i),
+        .dwishbone_data_output(data_data_i),
+        .dwishbone_we_output(data_we_i),
+        .dwishbone_sel_output(data_sel_i),
+        .dwishbone_stb_output(data_stb_i),
+        .dwishbone_cyc_output(data_cyc_i),
+        
+        .ram_ce_output()
+    );
 
 /* =========== Demo code begin =========== */
 

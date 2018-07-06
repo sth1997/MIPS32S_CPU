@@ -28,9 +28,6 @@ module CPU_TOP (
 	
  	//input wire[7: 0] int_i,
 
- 	input wire[31: 0] regfile_reg_sel,
-	output wire[31: 0] regfile_reg_out,
-
 	input wire[`RegBus] iwishbone_data_input,
 	input wire iwishbone_ack_input,
 	output wire[`RegBus] iwishbone_addr_output,
@@ -51,7 +48,7 @@ module CPU_TOP (
 
 	output wire rom_ce_output,
 	
-	output wire ram_ce_output,
+	output wire ram_ce_output
 
 	//output wire timer_int_output
 
