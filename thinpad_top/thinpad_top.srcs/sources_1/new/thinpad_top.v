@@ -83,7 +83,7 @@ module thinpad_top(
     wire rst;
     wire clk_o;
     assign rst = reset_btn;
-    assign clk_o = clock_btn;
+    assign clk_o = (dip_sw[8])?clk_50M:((dip_sw[0])?clock_btn:clk_11M0592);
 
     //inst wb
     wire [31:0] inst_data_i;
@@ -158,8 +158,8 @@ CPU_TOP CPU_TOP0(
         
         .ram_ce_output(),
         
-        .debug_pc_output(led_bits)
-        //.debug_data_output(number)
+        .debug_pc_output(led_bits),
+        .debug_data_output(number)
         //.debug_pc_output(),
         //.debug_data_output()
     );
@@ -192,8 +192,8 @@ sram_top sram_top0(
         .uart_wrn(uart_wrn),       
         .uart_dataready(uart_dataready),   
         .uart_tbre(uart_tbre),     
-        .uart_tsre(uart_tsre),
-        .debug_data_output(number)
+        .uart_tsre(uart_tsre)
+        //.debug_data_output(number)
     );
     
 //wb_conmax
@@ -314,17 +314,17 @@ wb_conmax_top wb_conmax_top0(
 
     // Slave 0 Interface: ram
 
-    .s8_data_i(sram_data_i), 
-    .s8_data_o(sram_data_o), 
-    .s8_addr_o(sram_addr_o), 
-    .s8_sel_o(sram_sel_o), 
-    .s8_we_o(sram_we_o), 
-    .s8_cyc_o(sram_cyc_o),
+    .s0_data_i(sram_data_i), 
+    .s0_data_o(sram_data_o), 
+    .s0_addr_o(sram_addr_o), 
+    .s0_sel_o(sram_sel_o), 
+    .s0_we_o(sram_we_o), 
+    .s0_cyc_o(sram_cyc_o),
     
-    .s8_stb_o(sram_stb_o), 
-    .s8_ack_i(sram_ack_i), 
-    .s8_err_i(1'b0), 
-    .s8_rty_i(1'b0),
+    .s0_stb_o(sram_stb_o), 
+    .s0_ack_i(sram_ack_i), 
+    .s0_err_i(1'b0), 
+    .s0_rty_i(1'b0),
 
     
 
@@ -429,17 +429,17 @@ wb_conmax_top wb_conmax_top0(
 
     // Slave 8 Interface
     
-    .s0_data_i(), 
-    .s0_data_o(), 
-    .s0_addr_o(), 
-    .s0_sel_o(), 
-    .s0_we_o(), 
-    .s0_cyc_o(),
+    .s8_data_i(), 
+    .s8_data_o(), 
+    .s8_addr_o(), 
+    .s8_sel_o(), 
+    .s8_we_o(), 
+    .s8_cyc_o(),
     
-    .s0_stb_o(), 
-    .s0_ack_i(1'b0), 
-    .s0_err_i(1'b0), 
-    .s0_rty_i(1'b0),
+    .s8_stb_o(), 
+    .s8_ack_i(1'b0), 
+    .s8_err_i(1'b0), 
+    .s8_rty_i(1'b0),
 
     // Slave 9 Interface
     

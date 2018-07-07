@@ -50,8 +50,8 @@ module CPU_TOP (
 	
 	output wire ram_ce_output,
     
-    output wire [15:0] debug_pc_output
-    //output wire [7:0] debug_data_output
+    output wire [15:0] debug_pc_output,
+    output wire [7:0] debug_data_output
 
 	//output wire timer_int_output
 
@@ -153,8 +153,7 @@ module CPU_TOP (
     wire[`RegBus] ram_data_input;
     
     assign debug_pc_output = pc[15:0];
-    //assign debug_data_output[5:0] = bubble[5:0];
-    //assign debug_data_output[6] = flush;
+    assign debug_data_output = id_aluop_output;
     
     IF_PC_Reg if_pc_reg0(
             .clk(clk),
@@ -388,7 +387,9 @@ module CPU_TOP (
 
     wire cpu_ram_ce_output;
     assign cpu_ram_ce_output = ram_ce_output;
-
+    wire[`InstAddrBus] mmu_data_addr, mmu_inst_addr;
+    assign mmu_data_addr = {4'b0000, ram_addr_output[27:0]};
+    assign mmu_inst_addr = {4'b0000, pc[27:0]};
     wishbone_bus dwishbone_bus( 
         .clk(clk),
         .rst(rst),
@@ -399,7 +400,7 @@ module CPU_TOP (
     
         .cpu_ce_input(cpu_ram_ce_output),
         .cpu_data_input(ram_data_output),
-        .cpu_addr_input(ram_addr_output),
+        .cpu_addr_input(mmu_data_addr),
         .cpu_we_input(ram_we_output),
         .cpu_sel_input(ram_sel_output),
         .cpu_data_output(ram_data_input),
@@ -428,7 +429,7 @@ module CPU_TOP (
     
         .cpu_ce_input(rom_ce),
         .cpu_data_input(32'h00000000),
-        .cpu_addr_input(pc),
+        .cpu_addr_input(mmu_inst_addr),
         .cpu_we_input(1'b0),
         .cpu_sel_input(4'b1111),
         .cpu_data_output(inst_input),

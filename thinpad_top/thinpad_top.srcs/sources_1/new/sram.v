@@ -29,8 +29,8 @@ module sram_top(
 	output wire [3:0] extram_be,
 	output wire extram_ce,
 	output wire extram_oe,
-	output wire extram_we,
-	output wire [7:0] debug_data_output
+	output wire extram_we
+	//output wire [7:0] debug_data_output
 	);
 	
 	// Wishbone read/write accesses
@@ -52,7 +52,7 @@ module sram_top(
 	//assign wb_data_o = ram_selector ? extram_data : baseram_data;
 
 	reg [31:0] data_to_write;
-	assign baseram_data = (baseram_oe ^ (((wb_addr_i == 32'hBFD003F8)||(wb_addr_i == 32'hBFD003FC)) && (wb_rd))) ? data_to_write : {32{1'bz}};
+	assign baseram_data = (baseram_oe ^ (((wb_addr_i == 32'h0FD003F8)||(wb_addr_i == 32'h0FD003FC)) && (wb_rd))) ? data_to_write : {32{1'bz}};
 	assign extram_data = extram_oe ? data_to_write : {32{1'bz}};
 	assign baseram_addr = wb_addr_i[21:2];
 	assign extram_addr = wb_addr_i[21:2];
@@ -71,12 +71,13 @@ module sram_top(
 	localparam WRITE_TO_COMP_SND = 4'b0111;
 	localparam WRITE_TO_COMP_FINISH = 4'b1111;
 	localparam COMP_STATE_READ = 4'b1000;
-
+/*
     assign debug_data_output[3:0] = state;
     assign debug_data_output[4] = wb_rd;
     assign debug_data_output[5] = wb_wr;
     assign debug_data_output[6] = wb_acc;
     assign debug_data_output[7] = rst_i;
+*/
 	//all select
 	wire all_select = wb_sel_i[3] & wb_sel_i[2] & wb_sel_i[1] & wb_sel_i[0];
 
@@ -88,6 +89,7 @@ module sram_top(
 			ram_ce <= 1;
 			ram_oe <= 1;
 			ram_we <= 1;
+            uart_rdn <= 1;
 		end 
 		else if (wb_acc == 1'b0) begin
 			state <= IDLE;
@@ -96,24 +98,25 @@ module sram_top(
 			ram_ce <= 1;
 			ram_oe <= 1;
 			ram_we <= 1;
+            uart_rdn <= 1;
 		end
 		else begin
 			case(state)
 				IDLE:begin
-					if (wb_addr_i == 32'hBFD003F8) begin
+					if (wb_addr_i == 32'h0FD003F8) begin
 						ram_ce <= 1;
 						ram_oe <= 1;
 						ram_we <= 1;
 						wb_ack_o <= 1'b0;
+                        uart_rdn <= 1;
 						if (wb_rd) begin
-							uart_rdn <= 1;
 							state <= READ_FROM_COMP;
 						end else begin
 							uart_wrn <= 1;
 							state <= WRITE_TO_COMP_PRE;
 						end
 					end 
-					else if (wb_addr_i == 32'hBFD003FC) begin
+					else if (wb_addr_i == 32'h0FD003FC) begin
 						ram_ce <= 1;
 						ram_oe <= 1;
 						ram_we <= 1;
@@ -123,6 +126,8 @@ module sram_top(
 					end else begin
 						ram_ce <= 0;
 						wb_ack_o <= 1'b0;
+						uart_rdn <= 1;
+						uart_wrn <= 1;
 						if (wb_rd) begin
 							ram_oe <= 0;
 							state <= READ;
