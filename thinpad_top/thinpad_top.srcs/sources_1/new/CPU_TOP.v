@@ -50,8 +50,8 @@ module CPU_TOP (
 	
 	output wire ram_ce_output,
     
-    output wire [15:0] debug_pc_output,
-    output wire [7:0] debug_data_output
+    output wire [13:0] debug_pc_output
+    //output wire [7:0] debug_data_output
 
 	//output wire timer_int_output
 
@@ -152,8 +152,8 @@ module CPU_TOP (
     wire[`RegBus] ram_data_output;
     wire[`RegBus] ram_data_input;
     
-    assign debug_pc_output = pc[15:0];
-    assign debug_data_output = id_aluop_output;
+    assign debug_pc_output = pc[15:2];
+    //assign debug_data_output = mmu_data_addr[7:0];
     
     IF_PC_Reg if_pc_reg0(
             .clk(clk),

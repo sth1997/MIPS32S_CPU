@@ -115,11 +115,17 @@ module thinpad_top(
     
     //debug
     wire[15:0] led_bits;
+    wire rdn, wrn;
     assign leds = led_bits;
+    assign led_bits[0] = rdn;
+    assign uart_rdn = rdn;
+    assign led_bits[1] = wrn;
+    assign uart_wrn = wrn;
     
     wire[7:0] number;
     SEG7_LUT segL(.oSEG1(dpy0), .iDIG(number[3:0])); //dpy0是低位数码管
     SEG7_LUT segH(.oSEG1(dpy1), .iDIG(number[7:4])); //dpy1是高位数码管
+    
     /*
     always@(posedge clock_btn or posedge reset_btn) begin
         if(reset_btn)begin //复位按下，设置LED和数码管为初始�??
@@ -158,8 +164,8 @@ CPU_TOP CPU_TOP0(
         
         .ram_ce_output(),
         
-        .debug_pc_output(led_bits),
-        .debug_data_output(number)
+        .debug_pc_output(led_bits[15:2])
+        //.debug_data_output(number)
         //.debug_pc_output(),
         //.debug_data_output()
     );
@@ -188,12 +194,12 @@ sram_top sram_top0(
         .extram_ce(ext_ram_ce_n),
         .extram_oe(ext_ram_oe_n),
         .extram_we(ext_ram_we_n),
-        .uart_rdn(uart_rdn),      
-        .uart_wrn(uart_wrn),       
+        .uart_rdn(rdn),      
+        .uart_wrn(wrn),       
         .uart_dataready(uart_dataready),   
         .uart_tbre(uart_tbre),     
-        .uart_tsre(uart_tsre)
-        //.debug_data_output(number)
+        .uart_tsre(uart_tsre),
+        .debug_data_output(number)
     );
     
 //wb_conmax
