@@ -82,8 +82,15 @@ module thinpad_top(
 
     wire rst;
     wire clk_o;
+    /*
+    reg clk_25M = 1;
+    always @(posedge clk_50M) begin
+    	clk_25M = ~clk_25M;
+    end
+    */
     assign rst = reset_btn;
-    assign clk_o = (dip_sw[8])?clk_50M:((dip_sw[0])?clock_btn:clk_11M0592);
+    //assign clk_o = (dip_sw[8])?clk_50M:((dip_sw[0])?clock_btn:clk_11M0592);
+    assign clk_o = (dip_sw[8])?clk_50M:clock_btn;
 
     //inst wb
     wire [31:0] inst_data_i;
@@ -123,6 +130,7 @@ module thinpad_top(
     //assign uart_wrn = wrn;
     
     wire[7:0] number;
+    //assign number = data_addr_i[31:24];
     SEG7_LUT segL(.oSEG1(dpy0), .iDIG(number[3:0])); //dpy0是低位数码管
     SEG7_LUT segH(.oSEG1(dpy1), .iDIG(number[7:4])); //dpy1是高位数码管
     
@@ -164,8 +172,9 @@ CPU_TOP CPU_TOP0(
         
         .ram_ce_output(),
         
-        .debug_pc_output(led_bits[15:2])
-        //.debug_data_output(number)
+        .debug_led_output(led_bits),
+        .sw(dip_sw[7:0]),
+        .debug_data_output(number)
         //.debug_pc_output(),
         //.debug_data_output()
     );

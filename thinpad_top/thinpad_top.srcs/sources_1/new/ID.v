@@ -212,6 +212,29 @@ module ID(
                     case (inst_input[31:26])
                         `EXE_SPECIAL_INST:
                             begin
+                                if(inst_input[31: 21] == 11'b00000000000) 
+                                    begin
+                                        if(inst_input[5:0] == `EXE_SLL) 
+                                            begin
+                                                wreg_output <= `WriteEnable;
+                                                aluop_output <= `EXE_SLL_OP;
+                                                alusel_output <= `EXE_RES_SHIFT;
+                                                reg1_read_output <= 1'b0;
+                                                reg2_read_output <= 1'b1;
+                                                imm[4: 0] <= inst_input[10: 6];
+                                                waddr_output <= inst_input[15: 11];
+                                            end
+                                        if(inst_input[5:0] == `EXE_SRL) 
+                                            begin
+                                                wreg_output <= `WriteEnable;
+                                                aluop_output <= `EXE_SRL_OP;
+                                                alusel_output <= `EXE_RES_SHIFT;
+                                                reg1_read_output <= 1'b0;
+                                                reg2_read_output <= 1'b1;
+                                                imm[4: 0] <= inst_input[10: 6];
+                                                waddr_output <= inst_input[15: 11];
+                                            end
+                                    end
                                 case (inst_input[10:6])
                                     5'b00000:
                                         begin
@@ -428,32 +451,6 @@ module ID(
                             
                             
                             
-                        6'b000000:
-                            begin
-                                if(inst_input[31: 21] == 11'b00000000000) 
-                                    begin
-                                        if(inst_input[5:0] == `EXE_SLL) 
-                                            begin
-                                                wreg_output <= `WriteEnable;
-                                                aluop_output <= `EXE_SLL_OP;
-                                                alusel_output <= `EXE_RES_SHIFT;
-                                                reg1_read_output <= 1'b0;
-                                                reg2_read_output <= 1'b1;
-                                                imm[4: 0] <= inst_input[10: 6];
-                                                waddr_output <= inst_input[15: 11];
-                                            end
-                                        if(inst_input[5:0] == `EXE_SRL) 
-                                            begin
-                                                wreg_output <= `WriteEnable;
-                                                aluop_output <= `EXE_SRL_OP;
-                                                alusel_output <= `EXE_RES_SHIFT;
-                                                reg1_read_output <= 1'b0;
-                                                reg2_read_output <= 1'b1;
-                                                imm[4: 0] <= inst_input[10: 6];
-                                                waddr_output <= inst_input[15: 11];
-                                            end
-                                    end    
-                            end
                         default:
                             begin
                             

@@ -75,7 +75,7 @@ module sram_top(
 	localparam WRITE_TO_COMP_FINISH = 4'b1111;
 	localparam COMP_STATE_READ = 4'b1000;
 	*/
-    assign debug_data_output[3:0] = state;
+    //assign debug_data_output[3:0] = state;
     //assign debug_data_output[4] = uart_tbre;
     //assign debug_data_output[5] = uart_tsre;
     //assign debug_data_output[6] = uart_dataready;

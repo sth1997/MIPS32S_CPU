@@ -34,13 +34,15 @@ module Reg_Dir(
 	
 	input wire read_enable_2,
 	input wire[`RegAddrBus] raddr2,
-	output reg[`RegBus] rdata2
+	output reg[`RegBus] rdata2,
+	input wire[7:0] sw,
+	output wire[15:0] reg_out
 	
-
     );
     reg[`RegBus]  regs[0: `RegNum - 1];
     
-
+	assign reg_out = regs[sw][15:0];
+	
     always @ (posedge clk) 
         begin
             if (rst == `RstDisable) 
