@@ -115,12 +115,12 @@ module thinpad_top(
     
     //debug
     wire[15:0] led_bits;
-    wire rdn, wrn;
     assign leds = led_bits;
-    assign led_bits[0] = rdn;
-    assign uart_rdn = rdn;
-    assign led_bits[1] = wrn;
-    assign uart_wrn = wrn;
+    //wire rdn, wrn;
+    //assign led_bits[0] = rdn;
+    //assign uart_rdn = rdn;
+    //assign led_bits[1] = wrn;
+    //assign uart_wrn = wrn;
     
     wire[7:0] number;
     SEG7_LUT segL(.oSEG1(dpy0), .iDIG(number[3:0])); //dpy0是低位数码管
@@ -193,15 +193,43 @@ sram_top sram_top0(
         .extram_be(ext_ram_be_n),
         .extram_ce(ext_ram_ce_n),
         .extram_oe(ext_ram_oe_n),
-        .extram_we(ext_ram_we_n),
+        .extram_we(ext_ram_we_n)
+        /*
         .uart_rdn(rdn),      
         .uart_wrn(wrn),       
         .uart_dataready(uart_dataready),   
         .uart_tbre(uart_tbre),     
         .uart_tsre(uart_tsre),
         .debug_data_output(number)
+        */
     );
     
+    
+        wire [31:0] serial_data_i;
+        wire [31:0] serial_data_o;
+        wire [31:0] serial_addr_o;
+        wire [3:0] serial_sel_o;
+        wire serial_we_o;
+        wire serial_cyc_o;
+        wire serial_stb_o;
+        wire serial_ack_i;
+        
+SERIAL serial0(
+        .clk_50M(clk_50M),
+        .rst_i(rst),
+        
+        .txd(txd),
+        .rxd(rxd),
+        
+        .wb_stb_i(serial_stb_o),
+        .wb_cyc_i(serial_cyc_o),
+        .wb_ack_o(serial_ack_i),
+        .wb_addr_i(serial_addr_o),
+        .wb_sel_i(serial_sel_o),
+        .wb_we_i(serial_we_o),
+        .wb_data_i(serial_data_o),
+        .wb_data_o(serial_data_i)
+);
 //wb_conmax
 wb_conmax_top wb_conmax_top0(
     .clk_i(clk_o), .rst_i(rst),
@@ -318,20 +346,19 @@ wb_conmax_top wb_conmax_top0(
     .m7_err_o(), 
     .m7_rty_o(),
 
-    // Slave 0 Interface: ram
+    // Slave 0 Interface: non
 
-    .s0_data_i(sram_data_i), 
-    .s0_data_o(sram_data_o), 
-    .s0_addr_o(sram_addr_o), 
-    .s0_sel_o(sram_sel_o), 
-    .s0_we_o(sram_we_o), 
-    .s0_cyc_o(sram_cyc_o),
+    .s0_data_i(), 
+    .s0_data_o(), 
+    .s0_addr_o(), 
+    .s0_sel_o(), 
+    .s0_we_o(), 
+    .s0_cyc_o(),
     
-    .s0_stb_o(sram_stb_o), 
-    .s0_ack_i(sram_ack_i), 
+    .s0_stb_o(), 
+    .s0_ack_i(1'b0), 
     .s0_err_i(1'b0), 
     .s0_rty_i(1'b0),
-
     
 
     // Slave 1 Interface: flash
@@ -435,17 +462,18 @@ wb_conmax_top wb_conmax_top0(
 
     // Slave 8 Interface
     
-    .s8_data_i(), 
-    .s8_data_o(), 
-    .s8_addr_o(), 
-    .s8_sel_o(), 
-    .s8_we_o(), 
-    .s8_cyc_o(),
+    .s8_data_i(sram_data_i), 
+    .s8_data_o(sram_data_o), 
+    .s8_addr_o(sram_addr_o), 
+    .s8_sel_o(sram_sel_o), 
+    .s8_we_o(sram_we_o), 
+    .s8_cyc_o(sram_cyc_o),
     
-    .s8_stb_o(), 
-    .s8_ack_i(1'b0), 
+    .s8_stb_o(sram_stb_o), 
+    .s8_ack_i(sram_ack_i), 
     .s8_err_i(1'b0), 
     .s8_rty_i(1'b0),
+    
 
     // Slave 9 Interface
     
@@ -477,15 +505,15 @@ wb_conmax_top wb_conmax_top0(
 
     // Slave 11 Interface
     
-    .s11_data_i(), 
-    .s11_data_o(), 
-    .s11_addr_o(), 
-    .s11_sel_o(), 
-    .s11_we_o(), 
-    .s11_cyc_o(),
+    .s11_data_i(serial_data_i), 
+    .s11_data_o(serial_data_o), 
+    .s11_addr_o(serial_addr_o), 
+    .s11_sel_o(serial_sel_o), 
+    .s11_we_o(serial_we_o), 
+    .s11_cyc_o(serial_cyc_o),
     
-    .s11_stb_o(), 
-    .s11_ack_i(1'b0), 
+    .s11_stb_o(serial_stb_o), 
+    .s11_ack_i(serial_ack_i), 
     .s11_err_i(1'b0), 
     .s11_rty_i(1'b0),
 

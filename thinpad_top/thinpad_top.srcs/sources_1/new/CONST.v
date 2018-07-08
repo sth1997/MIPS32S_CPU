@@ -203,3 +203,6 @@
 `define RegNum 				32
 `define RegNumLog2 			5
 `define NOPRegAddr 			5'b00000
+
+`define SERIAL_CLK_FREQUENCE     50000000
+`define BAUD_RATE                9600

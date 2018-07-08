@@ -388,8 +388,8 @@ module CPU_TOP (
     wire cpu_ram_ce_output;
     assign cpu_ram_ce_output = ram_ce_output;
     wire[`InstAddrBus] mmu_data_addr, mmu_inst_addr;
-    assign mmu_data_addr = {4'b0000, ram_addr_output[27:0]};
-    assign mmu_inst_addr = {4'b0000, pc[27:0]};
+    assign mmu_data_addr = ram_addr_output;
+    assign mmu_inst_addr = pc;
     wishbone_bus dwishbone_bus( 
         .clk(clk),
         .rst(rst),
