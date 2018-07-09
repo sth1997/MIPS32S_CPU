@@ -111,14 +111,24 @@ module thinpad_top(
     wire data_stb_i;
     wire data_ack_o;
     // sram wb
-    wire [31:0] sram_data_i;
-    wire [31:0] sram_data_o;
-    wire [31:0] sram_addr_o;
-    wire [3:0] sram_sel_o;
-    wire sram_we_o;
-    wire sram_cyc_o;
-    wire sram_stb_o;
-    wire sram_ack_i;
+    wire [31:0] basesram_data_i;
+    wire [31:0] basesram_data_o;
+    wire [31:0] basesram_addr_o;
+    wire [3:0] basesram_sel_o;
+    wire basesram_we_o;
+    wire basesram_cyc_o;
+    wire basesram_stb_o;
+    wire basesram_ack_i;
+    
+    
+    wire [31:0] extrsram_data_i;
+    wire [31:0] extrsram_data_o;
+    wire [31:0] extrsram_addr_o;
+    wire [3:0] extrsram_sel_o;
+    wire extrsram_we_o;
+    wire extrsram_cyc_o;
+    wire extrsram_stb_o;
+    wire extrsram_ack_i;
     
     //debug
     wire[15:0] led_bits;
@@ -179,38 +189,43 @@ CPU_TOP CPU_TOP0(
         //.debug_data_output()
     );
     
-sram_top sram_top0(
+sram_top_base sram_top_base(
         .clk_i(clk_o),
         .rst_i(rst),
        
-        .wb_stb_i(sram_stb_o),
-        .wb_cyc_i(sram_cyc_o),
-        .wb_ack_o(sram_ack_i),
-        .wb_addr_i(sram_addr_o),
-        .wb_sel_i(sram_sel_o),
-        .wb_we_i(sram_we_o),
-        .wb_data_i(sram_data_o),
-        .wb_data_o(sram_data_i),
+        .wb_stb_i(basesram_stb_o),
+        .wb_cyc_i(basesram_cyc_o),
+        .wb_ack_o(basesram_ack_i),
+        .wb_addr_i(basesram_addr_o),
+        .wb_sel_i(basesram_sel_o),
+        .wb_we_i(basesram_we_o),
+        .wb_data_i(basesram_data_o),
+        .wb_data_o(basesram_data_i),
         .baseram_addr(base_ram_addr),
         .baseram_data(base_ram_data),
         .baseram_be(base_ram_be_n),
         .baseram_ce(base_ram_ce_n),
         .baseram_oe(base_ram_oe_n),
-        .baseram_we(base_ram_we_n),
+        .baseram_we(base_ram_we_n)
+    );
+sram_top_extr sram_top_extr(
+        .clk_i(clk_o),
+        .rst_i(rst),
+       
+        .wb_stb_i(extrsram_stb_o),
+        .wb_cyc_i(extrsram_cyc_o),
+        .wb_ack_o(extrsram_ack_i),
+        .wb_addr_i(extrsram_addr_o),
+        .wb_sel_i(extrsram_sel_o),
+        .wb_we_i(extrsram_we_o),
+        .wb_data_i(extrsram_data_o),
+        .wb_data_o(extrsram_data_i),
         .extram_addr(ext_ram_addr),
         .extram_data(ext_ram_data),
         .extram_be(ext_ram_be_n),
         .extram_ce(ext_ram_ce_n),
         .extram_oe(ext_ram_oe_n),
         .extram_we(ext_ram_we_n)
-        /*
-        .uart_rdn(rdn),      
-        .uart_wrn(wrn),       
-        .uart_dataready(uart_dataready),   
-        .uart_tbre(uart_tbre),     
-        .uart_tsre(uart_tsre),
-        .debug_data_output(number)
-        */
     );
     
     
@@ -471,30 +486,30 @@ wb_conmax_top wb_conmax_top0(
 
     // Slave 8 Interface
     
-    .s8_data_i(sram_data_i), 
-    .s8_data_o(sram_data_o), 
-    .s8_addr_o(sram_addr_o), 
-    .s8_sel_o(sram_sel_o), 
-    .s8_we_o(sram_we_o), 
-    .s8_cyc_o(sram_cyc_o),
+    .s8_data_i(basesram_data_i), 
+    .s8_data_o(basesram_data_o), 
+    .s8_addr_o(basesram_addr_o), 
+    .s8_sel_o(basesram_sel_o), 
+    .s8_we_o(basesram_we_o), 
+    .s8_cyc_o(basesram_cyc_o),
     
-    .s8_stb_o(sram_stb_o), 
-    .s8_ack_i(sram_ack_i), 
+    .s8_stb_o(basesram_stb_o), 
+    .s8_ack_i(basesram_ack_i), 
     .s8_err_i(1'b0), 
     .s8_rty_i(1'b0),
     
 
     // Slave 9 Interface
     
-    .s9_data_i(), 
-    .s9_data_o(), 
-    .s9_addr_o(), 
-    .s9_sel_o(), 
-    .s9_we_o(), 
-    .s9_cyc_o(),
+    .s9_data_i(extrsram_data_i), 
+    .s9_data_o(extrsram_data_o), 
+    .s9_addr_o(extrsram_addr_o), 
+    .s9_sel_o(extrsram_sel_o), 
+    .s9_we_o(extrsram_we_o), 
+    .s9_cyc_o(extrsram_cyc_o),
     
-    .s9_stb_o(), 
-    .s9_ack_i(1'b0), 
+    .s9_stb_o(extrsram_stb_o), 
+    .s9_ack_i(extrsram_ack_i), 
     .s9_err_i(1'b0), 
     .s9_rty_i(1'b0),
 

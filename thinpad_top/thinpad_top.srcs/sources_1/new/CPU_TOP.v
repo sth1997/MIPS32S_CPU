@@ -153,8 +153,11 @@ module CPU_TOP (
     wire[`RegBus] ram_data_output;
     wire[`RegBus] ram_data_input;
     
+    wire [15:0] debug_reg_output;
+    assign debug_led_output = (sw[7]) ? pc[15:0] : ((sw[6])?pc[31:16]:debug_reg_output);
+    
     //assign debug_pc_output = pc[15:2];
-    assign debug_data_output = ex_aluop_input;
+    assign debug_data_output = bubble;
     
     IF_PC_Reg if_pc_reg0(
             .clk(clk),
@@ -239,8 +242,8 @@ module CPU_TOP (
         .read_enable_2 (reg2_read),
         .raddr2 (reg2_addr),
         .rdata2 (reg2_data),
-        .sw(sw),
-        .reg_out(debug_led_output)
+        .sw(sw[5:0]),
+        .reg_out(debug_reg_output)
     );
 
     ID_EX id_ex0(
@@ -391,8 +394,9 @@ module CPU_TOP (
     wire cpu_ram_ce_output;
     assign cpu_ram_ce_output = ram_ce_output;
     wire[`InstAddrBus] mmu_data_addr, mmu_inst_addr;
-    assign mmu_data_addr = ram_addr_output;
-    assign mmu_inst_addr = pc;
+    assign mmu_data_addr = (ram_addr_output[31:22] == 10'b1000000001)?{10'b1001000000, ram_addr_output[21:0]}:ram_addr_output;
+    assign mmu_inst_addr = (pc[31:22] == 10'b1000000001)?{10'b1001000000, pc[21:0]}:pc;
+    
     wishbone_bus dwishbone_bus( 
         .clk(clk),
         .rst(rst),
