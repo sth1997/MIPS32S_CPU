@@ -63,4 +63,8 @@ Finally, change *run* with the correct location of *qemu-system-mipsel*, as for 
 
 Then the ucore will be able to compile. However, several ops are not supported in our default thumips-insn.txt, so we add them:
 
-    //TODO
+    MULT 000000sssssttttt0000000000011000
+
+Apply this patch will remove a warning:
+
+    https://git.qemu.org/?p=qemu.git;a=commitdiff;h=98cf48f60aa4999f5b2808569a193a401a390e6a
