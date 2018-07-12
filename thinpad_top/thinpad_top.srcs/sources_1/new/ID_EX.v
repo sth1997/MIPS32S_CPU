@@ -36,7 +36,8 @@ module ID_EX(
 	input wire[`RegBus] id_link_addr,
 	input wire next_inst_in_delayslot_input,
 	
-    input wire[`RegBus] id_inst,
+    input wire[`RegBus] id_inst,,
+	input wire[31: 0] id_excepttype,
 
 
     input wire flush_flag,
@@ -54,7 +55,9 @@ module ID_EX(
 	
 	output reg is_in_delayslot_output,
 
-    output reg[`RegBus] ex_inst
+    output reg[`RegBus] ex_inst,
+    output reg[`RegBus] ex_current_inst_addr,
+	output reg[31: 0] ex_excepttype
 	
 );
 
@@ -72,6 +75,8 @@ module ID_EX(
                     ex_is_in_delayslot <= `NotInDelaySlot;
                     is_in_delayslot_output <= `NotInDelaySlot;
                     ex_inst <= `ZeroWord;
+                    ex_excepttype <= `ZeroWord;
+					ex_current_inst_addr <= `ZeroWord;
                 end 
             else if(bubble_notice[2] == `Stop && bubble_notice[3] == `NoStop) 
                 begin
@@ -84,19 +89,24 @@ module ID_EX(
                     ex_link_addr <= `ZeroWord;
                     ex_is_in_delayslot <= `NotInDelaySlot;	
                     ex_inst <= `ZeroWord;	
+                    ex_excepttype <= `ZeroWord;
+					ex_current_inst_addr <= `ZeroWord;
                 end 
-            else if(bubble_notice[2] == `NoStop) begin		
-                ex_aluop <= id_aluop;
-                ex_alusel <= id_alusel;
-                ex_reg1 <= id_reg1;
-                ex_reg2 <= id_reg2;
-                ex_wd <= id_wd;
-                ex_wreg <= id_wreg;		
-                ex_link_addr <= id_link_addr;
-                ex_is_in_delayslot <= id_is_in_delayslot;
-                is_in_delayslot_output <= next_inst_in_delayslot_input;
-                ex_inst <= id_inst;
-            end
+            else if(bubble_notice[2] == `NoStop) 
+		        begin		
+		            ex_aluop <= id_aluop;
+		            ex_alusel <= id_alusel;
+		            ex_reg1 <= id_reg1;
+		            ex_reg2 <= id_reg2;
+		            ex_wd <= id_wd;
+		            ex_wreg <= id_wreg;		
+		            ex_link_addr <= id_link_addr;
+		            ex_is_in_delayslot <= id_is_in_delayslot;
+		            is_in_delayslot_output <= next_inst_in_delayslot_input;
+		            ex_inst <= id_inst;
+		            ex_excepttype <= id_excepttype;
+					ex_current_inst_addr <= id_current_inst_addr;
+		        end
         end
 	
 endmodule

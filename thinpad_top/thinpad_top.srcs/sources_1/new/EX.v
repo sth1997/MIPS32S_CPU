@@ -13,7 +13,13 @@ module EX(
 	input wire is_in_delayslot_input,
 	input wire[`RegBus] link_addr_input,
 	input wire[`RegBus] inst_input,
-
+	
+	input wire mem_cp0_reg_we,
+	input wire[4: 0] mem_cp0_reg_write_addr,
+	input wire[`RegBus] mem_cp0_reg_data,
+	input wire wb_cp0_reg_we,
+	input wire[4: 0] wb_cp0_reg_write_addr,
+	input wire[`RegBus] wb_cp0_reg_data,
 
 	input wire[`RegBus] current_inst_addr_input,
 
