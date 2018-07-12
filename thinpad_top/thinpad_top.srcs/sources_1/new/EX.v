@@ -56,6 +56,10 @@ module EX(
 	wire reg1_lt_reg2;
 	wire[`RegBus] reg2_input_mux;
 	wire[`RegBus] result_sum;
+	
+	wire is_ADEL, is_ADES;
+    assign is_ADES = (aluop_o == `EXE_SW_OP && mem_addr_o[1: 0] != 2'b00);
+    assign is_ADEL = (aluop_o == `EXE_LHU_OP && mem_addr_o[0] != 1'b0) || (aluop_o == `EXE_LW_OP && mem_addr_o[1: 0] != 2'b00);
 
 	assign current_inst_addr_output = current_inst_addr_input;
 	assign is_in_delayslot_output = is_in_delayslot_input;
