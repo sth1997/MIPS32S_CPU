@@ -84,7 +84,7 @@ module ID(
     assign pre_inst_is_load = ((ex_aluop_input == `EXE_LB_OP) || (ex_aluop_input == `EXE_LBU_OP) ||(ex_aluop_input == `EXE_LHU_OP) || (ex_aluop_input == `EXE_LW_OP))? 1'b1: 1'b0;
     assign bubble_require = bubble_require_wait_for_reg1_load | bubble_require_wait_for_reg2_load;
     
-    assign excepttype_o = {18'b0, 0, excepttype_is_eret, 2'b00, instvalid, excepttype_is_syscall, 8'b0};
+    assign excepttype_output = {18'b0, 0, excepttype_is_eret, 2'b00, instvalid, excepttype_is_syscall, 8'b0};
     
     assign inst_output = inst_input;
     assign branch_addr = (pc_input + 4) + {{14{inst_input[15]}}, inst_input[15: 0], 2'b00};
