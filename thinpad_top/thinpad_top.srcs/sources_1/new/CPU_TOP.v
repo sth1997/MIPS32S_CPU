@@ -26,7 +26,7 @@ module CPU_TOP (
 	input wire rst,
 	//output wire[31:0]             debug_led,
 	
- 	//input wire[7: 0] int_input,
+ 	input wire[7: 0] int_input,
 
 	input wire[`RegBus] iwishbone_data_input,
 	input wire iwishbone_ack_input,
@@ -52,9 +52,9 @@ module CPU_TOP (
     
     output wire [15:0] debug_led_output,
     input wire [7:0] sw,
-    output wire [7:0] debug_data_output
+    output wire [7:0] debug_data_output,
 
-	//output wire timer_int_output
+	output wire timer_int_output
 
 );
 
@@ -170,6 +170,13 @@ module CPU_TOP (
     wire[3:0] ram_sel_output;
     wire[`RegBus] ram_data_output;
     wire[`RegBus] ram_data_input;
+    
+    wire[`RegBus] cp0_data_output;
+    wire[`RegBus] cp0_count;
+	wire[`RegBus] cp0_compare;
+	wire[`RegBus] cp0_status;
+	wire[`RegBus] cp0_cause;
+	wire[`RegBus] cp0_epc;
     
     wire [15:0] debug_reg_output;
     assign debug_led_output = (sw[7]) ? pc[15:0] : ((sw[6])?pc[31:16]:debug_reg_output);
@@ -388,6 +395,18 @@ module CPU_TOP (
         .aluop_input(mem_aluop_input),
         .mem_addr_input(mem_mem_addr_input),
         .reg2_input(mem_reg2_input),
+        .cp0_reg_we_i(mem_cp0_reg_we_input),
+		.cp0_reg_write_addr_i(mem_cp0_reg_write_addr_input),
+		.cp0_reg_data_i(mem_cp0_reg_data_input),
+		.excepttype_i(mem_excepttype_input),
+		.is_in_delayslot_i(mem_is_in_delayslot_input),
+		.current_inst_addr_i(mem_current_inst_addr_input),
+        .cp0_status_i(cp0_status),
+		.cp0_cause_i(cp0_cause),
+		.cp0_epc_i(cp0_epc),
+  		.wb_cp0_reg_we(wb_cp0_reg_we_input),
+		.wb_cp0_reg_write_addr(wb_cp0_reg_write_addr_input),
+		.wb_cp0_reg_data(wb_cp0_reg_data_input),
         
         .mem_data_input(ram_data_input),    
       
@@ -399,7 +418,15 @@ module CPU_TOP (
 
         .waddr_output(mem_waddr_output),
         .wreg_output(mem_wreg_output),
-        .wdata_output(mem_wdata_output)
+        .wdata_output(mem_wdata_output),
+        
+        .cp0_reg_we_o(mem_cp0_reg_we_output),
+		.cp0_reg_write_addr_o(mem_cp0_reg_write_addr_output),
+		.cp0_reg_data_o(mem_cp0_reg_data_output),
+		.excepttype_o(mem_excepttype_output),
+        .cp0_epc_o(latest_epc),
+		.is_in_delayslot_o(mem_is_in_delayslot_output),
+		.current_inst_addr_o(mem_current_inst_addr_output)
     );
 
     MEM2WB mem2wb0(
@@ -510,5 +537,31 @@ module CPU_TOP (
         .stallreq(bubblereq_from_if)           
     
     );
+    
+    cp0_reg cp0_reg0(
+		.clk(clk),
+		.rst(rst),
+		
+		.we_i(wb_cp0_reg_we_input),
+		.waddr_i(wb_cp0_reg_write_addr_input),
+		.raddr_i(cp0_raddr_input),
+		.data_i(wb_cp0_reg_data_input),
+		
+		.excepttype_i(mem_excepttype_output),
+		.int_i(int_input),
+		.current_inst_addr_i(mem_current_inst_addr_output),
+		.is_in_delayslot_i(mem_is_in_delayslot_output),
+        .exc_vec_addr_o(exc_vector_addr),
+
+		.data_o(cp0_data_output),
+		.count_o(cp0_count),
+		.compare_o(cp0_compare),
+		.status_o(cp0_status),
+		.cause_o(cp0_cause),
+		.epc_o(cp0_epc),
+        .ebase_o(),
+		
+		.timer_int_o(timer_int_output)  			
+	);
 
 endmodule
