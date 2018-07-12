@@ -36,7 +36,7 @@ module ID_EX(
 	input wire[`RegBus] id_link_addr,
 	input wire next_inst_in_delayslot_input,
 	
-    input wire[`RegBus] id_inst,,
+    input wire[`RegBus] id_inst,
 	input wire[31: 0] id_excepttype,
 
 

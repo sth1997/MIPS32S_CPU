@@ -17,20 +17,32 @@ module EX(
 	input wire mem_cp0_reg_we,
 	input wire[4: 0] mem_cp0_reg_write_addr,
 	input wire[`RegBus] mem_cp0_reg_data,
+	
 	input wire wb_cp0_reg_we,
 	input wire[4: 0] wb_cp0_reg_write_addr,
 	input wire[`RegBus] wb_cp0_reg_data,
+	
+	input wire[`RegBus] cp0_reg_data_i,
 
+
+	input wire[31: 0] excepttype_i,
 	input wire[`RegBus] current_inst_addr_input,
 
 	output reg[`RegAddrBus] waddr_output,
 	output reg wreg_output,
 	output reg[`RegBus] wdata_output,
+	
+	output reg[4: 0] cp0_reg_read_addr_o,	
+	output reg cp0_reg_we_o,
+	output reg[4: 0] cp0_reg_write_addr_o,
+	output reg[`RegBus] cp0_reg_data_o,
+
 
 	output wire[`AluOpBus] aluop_output,
 	output wire[`RegBus] mem_addr_output,
 	output wire[`RegBus] reg2_output,
 	
+	output wire[31: 0] excepttype_o,
 	output wire[`RegBus] current_inst_addr_output,
 	
 	output wire is_in_delayslot_output
@@ -47,8 +59,70 @@ module EX(
 
 	assign current_inst_addr_output = current_inst_addr_input;
 	assign is_in_delayslot_output = is_in_delayslot_input;
+	assign excepttype_o = {excepttype_i[31: 12], is_ADES, is_ADEL, excepttype_i[9: 0]};
 
+	always @ (*) 
+		begin
+			if(rst == `RstEnable) 
+				begin	
+					moveres <= `ZeroWord;
+				end
+			else 
+				begin 
+					case (aluop_i)
+					/*
+						`EXE_MFHI_OP: 
+							begin
+								moveres <= HI;
+							end
+						`EXE_MFLO_OP: 
+							begin
+								moveres <= LO;
+							end
+					*/
+						`EXE_MFC0_OP: 
+							begin 
+								cp0_reg_read_addr_o <= inst_i[15: 11];
+								moveres <= cp0_reg_data_i;
 
+								if(mem_cp0_reg_we == `WriteEnable && mem_cp0_reg_write_addr == inst_i[15: 11]) 
+									begin 
+										moveres <= mem_cp0_reg_data;
+									end
+
+								else if(wb_cp0_reg_we == `WriteEnable && wb_cp0_reg_write_addr == inst_i[15: 11]) 
+									begin 
+										moveres <= wb_cp0_reg_data;
+									end 
+			 				end
+						default : 
+							begin
+							end
+					endcase
+				end
+		end
+
+	always @ (*) 
+		begin
+			if(rst == `RstEnable) 
+				begin
+					cp0_reg_write_addr_o <= 5'b00000;
+					cp0_reg_we_o <= `WriteDisable;
+					cp0_reg_data_o <= `ZeroWord;
+				end
+			else if(aluop_i == `EXE_MTC0_OP) 
+				begin
+					cp0_reg_write_addr_o <= inst_i[15: 11];
+					cp0_reg_we_o <= `WriteEnable;
+					cp0_reg_data_o <= reg1_i;
+				end 
+			else 
+				begin
+					cp0_reg_write_addr_o <= 5'b00000;
+					cp0_reg_we_o <= `WriteDisable;
+					cp0_reg_data_o <= `ZeroWord;
+				end
+		end
 	always @ (*) 
         begin
             if(rst == `RstEnable) 

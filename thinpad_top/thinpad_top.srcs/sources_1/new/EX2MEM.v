@@ -37,7 +37,12 @@ module EX2MEM(
 	input wire[`RegBus] ex_mem_addr,
 	input wire[`RegBus] ex_reg2,
 
+	input wire ex_cp0_reg_we,
+	input wire[4:0] ex_cp0_reg_write_addr,
+	input wire[`RegBus] ex_cp0_reg_data,
+
 	input wire flush_flag,
+	input wire[31: 0] ex_excepttype,
     input wire[`RegBus] ex_current_inst_addr,
     input wire ex_is_in_delayslot,
     
@@ -48,7 +53,12 @@ module EX2MEM(
 	output reg[`AluOpBus] mem_aluop,
 	output reg[`RegBus] mem_mem_addr,
 	output reg[`RegBus] mem_reg2,
+	
+	output reg mem_cp0_reg_we,
+	output reg[4:0] mem_cp0_reg_write_addr,
+	output reg[`RegBus] mem_cp0_reg_data,
 
+	output reg[31: 0] mem_excepttype,
 	output reg[`RegBus] mem_current_inst_addr,
 	output reg mem_is_in_delayslot		
 	
@@ -65,8 +75,12 @@ module EX2MEM(
                     mem_aluop <= `EXE_NOP_OP;
                     mem_mem_addr <= `ZeroWord;
                     mem_reg2 <= `ZeroWord;
+                    mem_excepttype <= `ZeroWord;
                     mem_current_inst_addr <= `ZeroWord;
                     mem_is_in_delayslot <= `NotInDelaySlot;
+                    mem_cp0_reg_we <= `WriteDisable;
+					mem_cp0_reg_write_addr <= 5'b00000;
+					mem_cp0_reg_data <= `ZeroWord;
                 end
             else if(bubble_notice[3] == `Stop && bubble_notice[4] == `NoStop) 
                 begin
@@ -76,8 +90,12 @@ module EX2MEM(
                     mem_aluop <= `EXE_NOP_OP;
                     mem_mem_addr <= `ZeroWord;
                     mem_reg2 <= `ZeroWord;	
+                    mem_excepttype <= `ZeroWord;
                     mem_current_inst_addr <= `ZeroWord;
-                    mem_is_in_delayslot <= `NotInDelaySlot;			  				    
+                    mem_is_in_delayslot <= `NotInDelaySlot;		
+                    mem_cp0_reg_we <= `WriteDisable;
+					mem_cp0_reg_write_addr <= 5'b00000;
+					mem_cp0_reg_data <= `ZeroWord;	  				    
                 end 
             else if(bubble_notice[3] == `NoStop) 
                 begin
@@ -87,8 +105,12 @@ module EX2MEM(
                     mem_aluop <= ex_aluop;
                     mem_mem_addr <= ex_mem_addr;
                     mem_reg2 <= ex_reg2;
+                    mem_excepttype <= ex_excepttype;
                     mem_current_inst_addr <= ex_current_inst_addr;
                     mem_is_in_delayslot <= ex_is_in_delayslot;
+                    mem_cp0_reg_we <= ex_cp0_reg_we;
+					mem_cp0_reg_write_addr <= ex_cp0_reg_write_addr;
+					mem_cp0_reg_data <= ex_cp0_reg_data;
                 end 
         end
 			
