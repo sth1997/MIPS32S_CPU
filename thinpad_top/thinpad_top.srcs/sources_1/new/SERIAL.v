@@ -34,7 +34,9 @@ module SERIAL(
     input  wire [ 3: 0] wb_sel_i,
     input  wire wb_we_i,
     input  wire [31: 0] wb_data_i,
-    output reg [31: 0] wb_data_o
+    output reg [31: 0] wb_data_o,
+    
+    output wire dataready
     );
     reg [7:0] regs[0 : 15];
     
@@ -47,6 +49,8 @@ module SERIAL(
     wire wb_acc = wb_cyc_i & wb_stb_i;    // WISHBONE access
     wire wb_wr  = wb_acc & wb_we_i;       // WISHBONE write access
     wire wb_rd  = wb_acc & ~wb_we_i; 
+    
+    assign dataready = ext_uart_ready;
     
     async_receiver #(.ClkFrequency(`SERIAL_CLK_FREQUENCE),.Baud(`BAUD_RATE)) 
         ext_uart_r(

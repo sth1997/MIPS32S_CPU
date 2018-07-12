@@ -156,6 +156,10 @@ module thinpad_top(
         end
     end
 */
+
+wire[7: 0] int_flag;
+wire time_int, uart_int;
+assign int_flag = {time_int, 1'b0, 1'b0, uart_int, 4'h0};
 CPU_TOP CPU_TOP0(
         .clk(clk_o),
         .rst(rst),
@@ -184,7 +188,9 @@ CPU_TOP CPU_TOP0(
         
         .debug_led_output(led_bits),
         .sw(dip_sw[7:0]),
-        .debug_data_output(number)
+        .debug_data_output(number),
+        .timer_int_output(time_int),
+        .int_input(int_flag)
         //.debug_pc_output(),
         //.debug_data_output()
     );
@@ -252,7 +258,10 @@ SERIAL serial0(
         .wb_sel_i(serial_sel_o),
         .wb_we_i(serial_we_o),
         .wb_data_i(serial_data_o),
-        .wb_data_o(serial_data_i)
+        .wb_data_o(serial_data_i),
+        
+        
+        .dataready(uart_int)
 );
 //wb_conmax
 wb_conmax_top wb_conmax_top0(

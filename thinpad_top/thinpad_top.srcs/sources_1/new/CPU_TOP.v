@@ -177,13 +177,15 @@ module CPU_TOP (
 	wire[`RegBus] cp0_status;
 	wire[`RegBus] cp0_cause;
 	wire[`RegBus] cp0_epc;
+	wire[4:0] cp0_raddr_input;
     
     wire [15:0] debug_reg_output;
     assign debug_led_output = (sw[7]) ? pc[15:0] : ((sw[6])?pc[31:16]:debug_reg_output);
     
     //assign debug_pc_output = pc[15:2];
-    assign debug_data_output = bubble;
-    
+    assign debug_data_output[5:0] = bubble;
+    assign debug_data_output[6] = bubblereq_from_if;
+    assign debug_data_output[7] = bubblereq_from_id;
     IF_PC_Reg if_pc_reg0(
             .clk(clk),
             .rst(rst),

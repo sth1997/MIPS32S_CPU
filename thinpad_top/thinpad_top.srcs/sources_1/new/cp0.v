@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `include "CONST.v"
 
-module cp0 (
+module cp0_reg (
    
     input wire clk,
     input wire rst,
