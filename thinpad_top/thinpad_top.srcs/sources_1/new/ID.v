@@ -84,7 +84,7 @@ module ID(
     assign pre_inst_is_load = ((ex_aluop_input == `EXE_LB_OP) || (ex_aluop_input == `EXE_LBU_OP) ||(ex_aluop_input == `EXE_LHU_OP) || (ex_aluop_input == `EXE_LW_OP))? 1'b1: 1'b0;
     assign bubble_require = bubble_require_wait_for_reg1_load | bubble_require_wait_for_reg2_load;
     
-    assign excepttype_output = {18'b0, 0, excepttype_is_eret, 2'b00, instvalid, excepttype_is_syscall, 8'b0};
+    assign excepttype_output = {18'b0, 1'b0, excepttype_is_eret, 2'b00, instvalid, excepttype_is_syscall, 8'b0};
     
     assign inst_output = inst_input;
     assign branch_addr = (pc_input + 4) + {{14{inst_input[15]}}, inst_input[15: 0], 2'b00};
@@ -301,11 +301,11 @@ module ID(
                                                     end
                                                 `EXE_SYSCALL: 
                                                 	begin 
-							  							wreg_o <= `WriteDisable;
-							  							aluop_o <= `EXE_SYSCALL_OP;
-							  							alusel_o <= `EXE_RES_NOP;
-							  							reg1_read_o <= 1'b0;
-							  							reg2_read_o <= 1'b0;
+							  							wreg_output <= `WriteDisable;
+							  							aluop_output <= `EXE_SYSCALL_OP;
+							  							alusel_output <= `EXE_RES_NOP;
+							  							reg1_read_output <= 1'b0;
+							  							reg2_read_output <= 1'b0;
 							  							instvalid <= `InstValid;
 							  							excepttype_is_syscall <= 1'b1;
 													end
@@ -497,38 +497,38 @@ module ID(
                     endcase //case (inst_input[31:26])
                     
                     
-                	if(inst_i[31: 21] == 11'b01000000000 && inst_i[10: 0] == 11'b00000000000) 
+                	if(inst_input[31: 21] == 11'b01000000000 && inst_input[10: 0] == 11'b00000000000) 
 		            	begin 
-					  		aluop_o <= `EXE_MFC0_OP;
-					  		alusel_o <= `EXE_RES_MOVE;
-					  		wd_o <= inst_i[20: 16];
-					  		wreg_o <= `WriteEnable;
+					  		aluop_output <= `EXE_MFC0_OP;
+					  		alusel_output <= `EXE_RES_MOVE;
+					  		waddr_output <= inst_input[20: 16];
+					  		wreg_output <= `WriteEnable;
 					  		instvalid <= `InstValid;
-					  		reg1_read_o <= 1'b0;
-					  		reg2_read_o <= 1'b0;	
+					  		reg1_read_output <= 1'b0;
+					  		reg2_read_output <= 1'b0;	
 					  	end
 				  	
 				  	
-				  	if(inst_i[31: 21] == 11'b01000000100 && (inst_i[10: 0] == 11'b00000000000 || inst_i[10: 0] == 11'b00000000001 
-				  		|| inst_i[10: 0] == 11'b00000000010  || inst_i[10: 0] == 11'b00000000011 )) 
+				  	if(inst_input[31: 21] == 11'b01000000100 && (inst_input[10: 0] == 11'b00000000000 || inst_input[10: 0] == 11'b00000000001 
+				  		|| inst_input[10: 0] == 11'b00000000010  || inst_input[10: 0] == 11'b00000000011 )) 
 					  	begin 
-					  		aluop_o <= `EXE_MTC0_OP;
-					  		alusel_o <= `EXE_RES_NOP;
-					  		wreg_o <= `WriteDisable;
+					  		aluop_output <= `EXE_MTC0_OP;
+					  		alusel_output <= `EXE_RES_NOP;
+					  		wreg_output <= `WriteDisable;
 					  		instvalid <= `InstValid;
-					  		reg1_read_o <= 1'b1;
-					  		reg1_addr_o <= inst_i[20: 16];
-					  		reg2_read_o <= 1'b0;	
+					  		reg1_read_output <= 1'b1;
+					  		reg1_addr_output <= inst_input[20: 16];
+					  		reg2_read_output <= 1'b0;	
 					  	end	
 
 				  	//eret
-				  	if(inst_i == `EXE_ERET) 
+				  	if(inst_input == `EXE_ERET) 
 					  	begin 
-					  		wreg_o <= `WriteDisable;
-					  		aluop_o <= `EXE_ERET_OP;
-					  		alusel_o <= `EXE_RES_NOP;
-					  		reg1_read_o <= 1'b0;
-					  		reg2_read_o <= 1'b0;
+					  		wreg_output <= `WriteDisable;
+					  		aluop_output <= `EXE_ERET_OP;
+					  		alusel_output <= `EXE_RES_NOP;
+					  		reg1_read_output <= 1'b0;
+					  		reg2_read_output <= 1'b0;
 					  		instvalid <= `InstValid;
 					  		excepttype_is_eret <= 1'b1;
 					  	end

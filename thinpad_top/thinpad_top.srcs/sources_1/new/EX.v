@@ -22,27 +22,27 @@ module EX(
 	input wire[4: 0] wb_cp0_reg_write_addr,
 	input wire[`RegBus] wb_cp0_reg_data,
 	
-	input wire[`RegBus] cp0_reg_data_i,
+	input wire[`RegBus] cp0_reg_data_input,
 
 
-	input wire[31: 0] excepttype_i,
+	input wire[31: 0] excepttype_input,
 	input wire[`RegBus] current_inst_addr_input,
 
 	output reg[`RegAddrBus] waddr_output,
 	output reg wreg_output,
 	output reg[`RegBus] wdata_output,
 	
-	output reg[4: 0] cp0_reg_read_addr_o,	
-	output reg cp0_reg_we_o,
-	output reg[4: 0] cp0_reg_write_addr_o,
-	output reg[`RegBus] cp0_reg_data_o,
+	output reg[4: 0] cp0_reg_read_addr_output,	
+	output reg cp0_reg_we_output,
+	output reg[4: 0] cp0_reg_write_addr_output,
+	output reg[`RegBus] cp0_reg_data_output,
 
 
 	output wire[`AluOpBus] aluop_output,
 	output wire[`RegBus] mem_addr_output,
 	output wire[`RegBus] reg2_output,
 	
-	output wire[31: 0] excepttype_o,
+	output wire[31: 0] excepttype_output,
 	output wire[`RegBus] current_inst_addr_output,
 	
 	output wire is_in_delayslot_output
@@ -58,12 +58,12 @@ module EX(
 	wire[`RegBus] result_sum;
 	
 	wire is_ADEL, is_ADES;
-    assign is_ADES = (aluop_o == `EXE_SW_OP && mem_addr_o[1: 0] != 2'b00);
-    assign is_ADEL = (aluop_o == `EXE_LHU_OP && mem_addr_o[0] != 1'b0) || (aluop_o == `EXE_LW_OP && mem_addr_o[1: 0] != 2'b00);
+    assign is_ADES = (aluop_output == `EXE_SW_OP && mem_addr_output[1: 0] != 2'b00);
+    assign is_ADEL = (aluop_output == `EXE_LHU_OP && mem_addr_output[0] != 1'b0) || (aluop_output == `EXE_LW_OP && mem_addr_output[1: 0] != 2'b00);
 
 	assign current_inst_addr_output = current_inst_addr_input;
 	assign is_in_delayslot_output = is_in_delayslot_input;
-	assign excepttype_o = {excepttype_i[31: 12], is_ADES, is_ADEL, excepttype_i[9: 0]};
+	assign excepttype_output = {excepttype_input[31: 12], is_ADES, is_ADEL, excepttype_input[9: 0]};
 
 	always @ (*) 
 		begin
@@ -73,7 +73,7 @@ module EX(
 				end
 			else 
 				begin 
-					case (aluop_i)
+					case (aluop_input)
 					/*
 						`EXE_MFHI_OP: 
 							begin
@@ -86,15 +86,15 @@ module EX(
 					*/
 						`EXE_MFC0_OP: 
 							begin 
-								cp0_reg_read_addr_o <= inst_i[15: 11];
-								moveres <= cp0_reg_data_i;
+								cp0_reg_read_addr_output <= inst_input[15: 11];
+								moveres <= cp0_reg_data_input;
 
-								if(mem_cp0_reg_we == `WriteEnable && mem_cp0_reg_write_addr == inst_i[15: 11]) 
+								if(mem_cp0_reg_we == `WriteEnable && mem_cp0_reg_write_addr == inst_input[15: 11]) 
 									begin 
 										moveres <= mem_cp0_reg_data;
 									end
 
-								else if(wb_cp0_reg_we == `WriteEnable && wb_cp0_reg_write_addr == inst_i[15: 11]) 
+								else if(wb_cp0_reg_we == `WriteEnable && wb_cp0_reg_write_addr == inst_input[15: 11]) 
 									begin 
 										moveres <= wb_cp0_reg_data;
 									end 
@@ -110,21 +110,21 @@ module EX(
 		begin
 			if(rst == `RstEnable) 
 				begin
-					cp0_reg_write_addr_o <= 5'b00000;
-					cp0_reg_we_o <= `WriteDisable;
-					cp0_reg_data_o <= `ZeroWord;
+					cp0_reg_write_addr_output <= 5'b00000;
+					cp0_reg_we_output <= `WriteDisable;
+					cp0_reg_data_output <= `ZeroWord;
 				end
-			else if(aluop_i == `EXE_MTC0_OP) 
+			else if(aluop_input == `EXE_MTC0_OP) 
 				begin
-					cp0_reg_write_addr_o <= inst_i[15: 11];
-					cp0_reg_we_o <= `WriteEnable;
-					cp0_reg_data_o <= reg1_i;
+					cp0_reg_write_addr_output <= inst_input[15: 11];
+					cp0_reg_we_output <= `WriteEnable;
+					cp0_reg_data_output <= reg1_input;
 				end 
 			else 
 				begin
-					cp0_reg_write_addr_o <= 5'b00000;
-					cp0_reg_we_o <= `WriteDisable;
-					cp0_reg_data_o <= `ZeroWord;
+					cp0_reg_write_addr_output <= 5'b00000;
+					cp0_reg_we_output <= `WriteDisable;
+					cp0_reg_data_output <= `ZeroWord;
 				end
 		end
 	always @ (*) 

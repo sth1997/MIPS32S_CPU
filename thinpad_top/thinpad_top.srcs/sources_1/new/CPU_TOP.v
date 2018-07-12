@@ -26,7 +26,7 @@ module CPU_TOP (
 	input wire rst,
 	//output wire[31:0]             debug_led,
 	
- 	//input wire[7: 0] int_i,
+ 	//input wire[7: 0] int_input,
 
 	input wire[`RegBus] iwishbone_data_input,
 	input wire iwishbone_ack_input,
@@ -57,6 +57,8 @@ module CPU_TOP (
 	//output wire timer_int_output
 
 );
+
+
     wire[`InstAddrBus] pc;
     wire[`InstBus] inst_input;
     wire[`InstAddrBus] id_pc_input;
@@ -74,6 +76,7 @@ module CPU_TOP (
     wire[`RegBus] id_link_addr_output;
     wire[`RegBus] id_inst_output;
     wire[`RegBus] id_current_inst_addr_output;
+    wire[31:0] id_excepttype_output;
     
     wire[`AluOpBus] ex_aluop_input;
     wire[`AluSelBus] ex_alusel_input;
@@ -96,6 +99,10 @@ module CPU_TOP (
     wire[`RegBus] ex_reg2_output;
     wire[`RegBus] ex_current_inst_addr_output;
     wire ex_is_in_delayslot_output;
+    wire[31:0] ex_excepttype_output;
+    wire ex_cp0_reg_we_output;
+	wire[4:0] ex_cp0_reg_write_addr_output;
+	wire[`RegBus] ex_cp0_reg_data_output;
     
     wire mem_wreg_input;
     wire[`RegAddrBus] mem_waddr_input;
@@ -106,6 +113,10 @@ module CPU_TOP (
     wire[`RegBus] mem_reg2_input; 
     wire mem_is_in_delayslot_input;
     wire[`RegBus] mem_current_inst_addr_input;
+    wire[31:0] mem_excepttype_input;
+    wire mem_cp0_reg_we_input;
+	wire[4:0] mem_cp0_reg_write_addr_input;
+	wire[`RegBus] mem_cp0_reg_data_input;
     
     wire mem_wreg_output;
     wire[`RegAddrBus] mem_waddr_output;
@@ -113,13 +124,20 @@ module CPU_TOP (
     wire mem_is_in_delayslot_output;
     wire[`RegBus] mem_current_inst_addr_output;
     wire[`RegBus] mem_unliagned_addr_output;
-    
+    wire[31:0] mem_excepttype_output;
+    wire mem_cp0_reg_we_output;
+	wire[4:0] mem_cp0_reg_write_addr_output;
+	wire[`RegBus] mem_cp0_reg_data_output;
     
     wire wb_wreg_input;
     wire[`RegAddrBus] wb_waddr_input;
     wire[`RegBus] wb_wdata_input;
     wire wb_is_in_delayslot_input;
     wire[`RegBus] wb_current_inst_addr_input;
+    wire[31:0] wb_excepttype_input;
+    wire wb_cp0_reg_we_input;
+	wire[4:0] wb_cp0_reg_write_addr_input;
+	wire[`RegBus] wb_cp0_reg_data_input;
     
     
     wire reg1_read;
@@ -200,7 +218,6 @@ module CPU_TOP (
         .mem_waddr_input(mem_waddr_output),
         .mem_wdata_input(mem_wdata_output),
 
-        .is_in_delayslot_input(is_in_delayslot_input),
         .ex_aluop_input(ex_aluop_output),
         
         .reg1_read_output(reg1_read),
@@ -221,11 +238,14 @@ module CPU_TOP (
         .branch_flag_output(id_branch_flag_output),
         .branch_target_addr_output(branch_target_addr),       
         .link_addr_output(id_link_addr_output),
+        
+        .is_in_delayslot_input(is_in_delayslot_input),
         .is_in_delayslot_output(id_is_in_delayslot_output),
 
         .inst_output(id_inst_output),
         .bubble_require(bubblereq_from_id),
 
+		.excepttype_output(id_excepttype_output),
         .current_inst_addr_output(id_current_inst_addr_output)
     );
     
@@ -263,6 +283,7 @@ module CPU_TOP (
         .id_is_in_delayslot(id_is_in_delayslot_output),
         .next_inst_in_delayslot_input(next_inst_in_delayslot_output),    
         .id_inst(id_inst_output),
+        .id_excepttype(id_excepttype_output),
         .id_current_inst_addr(id_current_inst_addr_output),
 
         .ex_aluop(ex_aluop_input),
@@ -274,7 +295,9 @@ module CPU_TOP (
         .ex_link_addr(ex_link_addr_input),
         .ex_is_in_delayslot(ex_is_in_delayslot_input),
         .is_in_delayslot_output(is_in_delayslot_input),    
-        .ex_inst(ex_inst_input)
+        .ex_inst(ex_inst_input),
+        .ex_excepttype(ex_excepttype_input),
+		.ex_current_inst_addr(ex_current_inst_addr_input)
 
     );        
     
@@ -292,11 +315,27 @@ module CPU_TOP (
         .link_addr_input(ex_link_addr_input),
         .is_in_delayslot_input(ex_is_in_delayslot_input),
 
+
+	  	.mem_cp0_reg_we(mem_cp0_reg_we_output),
+		.mem_cp0_reg_write_addr(mem_cp0_reg_write_addr_output),
+		.mem_cp0_reg_data(mem_cp0_reg_data_output),
+		.wb_cp0_reg_we(wb_cp0_reg_we_input),
+		.wb_cp0_reg_write_addr(wb_cp0_reg_write_addr_input),
+		.wb_cp0_reg_data(wb_cp0_reg_data_input),
+
+		.cp0_reg_data_input(cp0_data_output),
+		.cp0_reg_read_addr_output(cp0_raddr_input),
+		.cp0_reg_we_output(ex_cp0_reg_we_output),
+		.cp0_reg_write_addr_output(ex_cp0_reg_write_addr_output),
+		.cp0_reg_data_output(ex_cp0_reg_data_output),	
+
+		.excepttype_input(ex_excepttype_input),
         .current_inst_addr_input(ex_current_inst_addr_input),
               
         .waddr_output(ex_waddr_output),
         .wreg_output(ex_wreg_output),
         .wdata_output(ex_wdata_output),
+        .excepttype_output(ex_excepttype_output),
         .is_in_delayslot_output(ex_is_in_delayslot_output),
         .current_inst_addr_output(ex_current_inst_addr_output),
 
@@ -319,6 +358,10 @@ module CPU_TOP (
         .ex_aluop(ex_aluop_output),
         .ex_mem_addr(ex_mem_addr_output),
         .ex_reg2(ex_reg2_output),
+        .ex_cp0_reg_we(ex_cp0_reg_we_output),
+		.ex_cp0_reg_write_addr(ex_cp0_reg_write_addr_output),
+		.ex_cp0_reg_data(ex_cp0_reg_data_output),
+		.ex_excepttype(ex_excepttype_output),
         .ex_is_in_delayslot(ex_is_in_delayslot_output),
         .ex_current_inst_addr(ex_current_inst_addr_output),
 
@@ -328,6 +371,10 @@ module CPU_TOP (
         .mem_aluop(mem_aluop_input),
         .mem_mem_addr(mem_mem_addr_input),
         .mem_reg2(mem_reg2_input),
+        .mem_cp0_reg_we(mem_cp0_reg_we_input),
+		.mem_cp0_reg_write_addr(mem_cp0_reg_write_addr_input),
+		.mem_cp0_reg_data(mem_cp0_reg_data_input),
+		.mem_excepttype(mem_excepttype_input),
         .mem_is_in_delayslot(mem_is_in_delayslot_input),
         .mem_current_inst_addr(mem_current_inst_addr_input)    
 
@@ -365,10 +412,16 @@ module CPU_TOP (
         .mem_waddr(mem_waddr_output),
         .mem_wreg(mem_wreg_output),
         .mem_wdata(mem_wdata_output),
+		.mem_cp0_reg_we(mem_cp0_reg_we_output),
+		.mem_cp0_reg_write_addr(mem_cp0_reg_write_addr_output),
+	.mem_cp0_reg_data(mem_cp0_reg_data_output),
     
         .wb_waddr(wb_waddr_input),
         .wb_wreg(wb_wreg_input),
-        .wb_wdata(wb_wdata_input)  
+        .wb_wdata(wb_wdata_input),
+		.wb_cp0_reg_we(wb_cp0_reg_we_input),
+		.wb_cp0_reg_write_addr(wb_cp0_reg_write_addr_input),
+		.wb_cp0_reg_data(wb_cp0_reg_data_input)  
                                                
     );
 
@@ -386,6 +439,10 @@ module CPU_TOP (
 
         .stall(bubble),
         .flush(flush),  
+
+		.excepttype_input(mem_excepttype_output),
+		.exc_vec_addr_input(exc_vector_addr),
+		.cp0_epc_input(latest_epc),
 
         .new_pc(new_pc)
 
