@@ -206,3 +206,16 @@
 
 `define SERIAL_CLK_FREQUENCE     50000000
 `define BAUD_RATE                9600
+
+// cp0
+`define CP0_REG_INDEX    5'b00000
+`define CP0_REG_ENTRYLO0 5'b00010
+`define CP0_REG_ENTRYLO1 5'b00011
+`define CP0_REG_BADVADDR 5'b01000
+`define CP0_REG_COUNT    5'b01001
+`define CP0_REG_ENTRYHI  5'b01010        
+`define CP0_REG_COMPARE  5'b01011      
+`define CP0_REG_STATUS   5'b01100       
+`define CP0_REG_CAUSE    5'b01101       
+`define CP0_REG_EPC      5'b01110
+`define CP0_REG_EBASE    5'b01111
