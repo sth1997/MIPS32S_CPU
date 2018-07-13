@@ -219,3 +219,9 @@
 `define CP0_REG_CAUSE    5'b01101       
 `define CP0_REG_EPC      5'b01110
 `define CP0_REG_EBASE    5'b01111
+
+//TLB
+`define TLB_WRITE_STRUCT_WIDTH 68 // 1 + 4 + 63 
+`define TLB_ENTRY_WIDTH 63
+`define TLB_INDEX_WIDTH 4
+`define TLB_NR_ENTRY    (1 << `TLB_INDEX_WIDTH)      
