@@ -48,18 +48,49 @@ module mem(
 	output reg[31: 0]           excepttype_o,
 	output wire[`RegBus]        current_inst_addr_o,
 	output wire[`RegBus]        cp0_epc_o,
-	output wire                 is_in_delayslot_o
+	output wire                 is_in_delayslot_o,
+	
+	input wire[31: 0] badvaddr_i,
+	output wire[31: 0] badvaddr_o,
+	
+	input wire is_tlb_modify,
+    input wire is_tlbl_data,
+    input wire is_tlbs,
+	output wire is_save_inst,
+	
+	input wire[`RegBus] cp0_index_i,
+	input wire[`RegBus] cp0_entrylo0_i,
+	input wire[`RegBus] cp0_entrylo1_i,
+	input wire[`RegBus] cp0_entryhi_i,
+	output wire[`TLB_WRITE_STRUCT_WIDTH - 1:0] tlb_write_struct_o
 );
 
 	reg mem_we;
     reg[`RegBus] cp0_status;
 	reg[`RegBus] cp0_cause;
 	reg[`RegBus] cp0_epc;
+	
+	reg[`RegBus] cp0_index;
+	reg[`RegBus] cp0_entrylo0;
+	reg[`RegBus] cp0_entrylo1;
+	reg[`RegBus] cp0_entryhi;
+	
+	// tlb
+	wire tlb_write_enable;
+    wire [`TLB_INDEX_WIDTH-1: 0] tlb_write_index;
+    wire [`TLB_ENTRY_WIDTH-1: 0] tlb_write_entry;
+
+    assign tlb_write_enable = (aluop_input == `EXE_TLBWI_OP);
+    assign tlb_write_index = cp0_index[3: 0];
+    assign tlb_write_entry = {cp0_entryhi[31: 13], cp0_entrylo1[25: 6], cp0_entrylo1[2: 1], cp0_entrylo0[25: 6], cp0_entrylo0[2: 1]};
+	assign tlb_write_struct_o = {tlb_write_enable, tlb_write_index, tlb_write_entry};
     
 	assign mem_we_output = mem_we & (~(|excepttype_o));
     assign is_in_delayslot_o = is_in_delayslot_i;
 	assign current_inst_addr_o = current_inst_addr_i;
     assign cp0_epc_o = cp0_epc;	
+    assign badvaddr_o = (excepttype_i[13] == 1'b1)? current_inst_addr_i: badvaddr_i;
+    assign is_save_inst = mem_we;
 	
 	always @ (*) begin
 		if(rst == `RstEnable) begin
@@ -218,6 +249,18 @@ module mem(
 				else if(excepttype_i[8] == 1'b1) begin
 			  		excepttype_o <= 32'h00000008;        //syscall
 				end
+				else if(excepttype_i[13] == 1'b1) begin  
+					excepttype_o <= 32'h0000000f;        // tlbl_inst
+				end	 
+				else if(is_tlbl_data && (mem_addr_input != `ZeroWord)) begin 
+					excepttype_o <= 32'h00000011;        // is tlbl data
+				end
+				else if(is_tlbs && (mem_addr_input != `ZeroWord)) begin 
+					excepttype_o <= 32'h00000012;        // is tlbs
+				end
+				else if(is_tlb_modify && (mem_addr_input != `ZeroWord)) begin 
+					excepttype_o <= 32'h00000010;        // is tlb modify
+				end
 				else if(excepttype_i[9] == 1'b1) begin
 					excepttype_o <= 32'h0000000a;        //inst_invalid
 				end
@@ -272,6 +315,61 @@ module mem(
 		end 
 		else begin
 		  	cp0_cause <= cp0_cause_i;
+		end
+	end
+	
+  	always @ (*) begin
+		if(rst == `RstEnable) begin
+			cp0_index <= `ZeroWord;
+		end 
+		else if((wb_cp0_reg_we == `WriteEnable) && 
+				(wb_cp0_reg_write_addr == `CP0_REG_INDEX ))begin
+			cp0_index[3: 0] <= wb_cp0_reg_data[3: 0];
+		end 
+		else begin
+		  	cp0_index <= cp0_index_i;
+		end
+	end
+
+  	always @ (*) begin
+		if(rst == `RstEnable) begin
+			cp0_entrylo0 <= `ZeroWord;
+		end 
+		else if((wb_cp0_reg_we == `WriteEnable) && 
+				(wb_cp0_reg_write_addr == `CP0_REG_ENTRYLO0 ))begin
+			cp0_entrylo0[25: 6] <= wb_cp0_reg_data[25: 6];
+            cp0_entrylo0[2: 0] <= wb_cp0_reg_data[2: 0];
+		end 
+		else begin
+		  	cp0_entrylo0 <= cp0_entrylo0_i;
+		end
+	end
+
+  	always @ (*) begin
+		if(rst == `RstEnable) begin
+			cp0_entrylo1 <= `ZeroWord;
+		end 
+		else if((wb_cp0_reg_we == `WriteEnable) && 
+				(wb_cp0_reg_write_addr == `CP0_REG_ENTRYLO1 ))begin
+			cp0_entrylo1[25: 6] <= wb_cp0_reg_data[25: 6];
+            cp0_entrylo1[2: 0] <= wb_cp0_reg_data[2: 0];
+		end 
+		else begin
+		  	cp0_entrylo1 <= cp0_entrylo1_i;
+		end
+	end
+
+  	always @ (*) begin
+		if(rst == `RstEnable) begin
+			cp0_entryhi <= `ZeroWord;
+		end 
+		else if((wb_cp0_reg_we == `WriteEnable) && 
+				(wb_cp0_reg_write_addr == `CP0_REG_ENTRYHI ))begin
+			cp0_entryhi[31: 13] <= wb_cp0_reg_data[31: 13];
+            cp0_entryhi[7: 0] <= wb_cp0_reg_data[7: 0];
+		end 
+		else begin
+		  	cp0_entryhi <= cp0_entryhi_i;
 		end
 	end
 
