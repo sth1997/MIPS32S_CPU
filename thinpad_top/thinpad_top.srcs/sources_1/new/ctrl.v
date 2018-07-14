@@ -45,12 +45,10 @@ module ctrl(
 					32'h0000000e: begin  // eret
 						new_pc <= cp0_epc_input;
 					end
-					/*
 					32'h0000000f, 32'h00000010, 32'h00000011, 32'h00000012: begin  
 					// TLBL, inst; TLB Mod;      TLBL_Data;    TLBS
 						new_pc <= exc_vec_addr_input;
 					end
-					*/
 					default : begin 
 					end
 				endcase

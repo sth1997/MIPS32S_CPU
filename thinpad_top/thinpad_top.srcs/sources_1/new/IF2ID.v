@@ -28,8 +28,8 @@ module IF2ID(
     input wire [`InstAddrBus] PC_input,
     input wire [`InstBus] inst_input,
     
-    //input wire is_inst_tlbl_i,
-    //output reg is_inst_tlbl_o,
+    input wire is_inst_tlbl_input,
+    output reg is_inst_tlbl_output,
     
     output reg [`InstAddrBus] PC_output,
     output reg [`InstBus] inst_output
@@ -40,21 +40,25 @@ module IF2ID(
                 begin
                     PC_output <= `ZeroWord;
                     inst_output <= `ZeroWord;
+                    is_inst_tlbl_output <= 1'b0;
                 end 
             else if (flush_flag == 1'b1)
                 begin
                       PC_output <= `ZeroWord;
                       inst_output <= `ZeroWord;
+                      is_inst_tlbl_output <= 1'b0;
                 end
             else if (bubble_notice[1] == `NoStop) 
                 begin
                     PC_output <= PC_input;
-                    inst_output <= inst_input;
+                    inst_output <= (is_inst_tlbl_input ? `ZeroWord: inst_input);
+                    is_inst_tlbl_output <= is_inst_tlbl_input;
                 end
             else if (bubble_notice[2] == `NoStop) 
                 begin 
                     PC_output <= `ZeroWord;
                     inst_output <= `ZeroWord;
+                    is_inst_tlbl_output <= 1'b0;
                 end
         end
 endmodule

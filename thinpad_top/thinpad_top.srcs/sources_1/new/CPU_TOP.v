@@ -178,6 +178,10 @@ module CPU_TOP (
 	wire[`RegBus] cp0_cause;
 	wire[`RegBus] cp0_epc;
 	wire[4:0] cp0_raddr_input;
+	
+	wire[`TLB_WRITE_STRUCT_WIDTH - 1:0] mem_tlb_write_struct;
+	wire mmu_is_tlbl_inst;
+	wire id_is_tlbl_inst;
     
     wire [15:0] debug_reg_output;
     assign debug_led_output = (sw[7]) ? pc[15:0] : ((sw[6])?pc[31:16]:debug_reg_output);
@@ -186,6 +190,9 @@ module CPU_TOP (
     assign debug_data_output[5:0] = bubble;
     assign debug_data_output[6] = bubblereq_from_if;
     assign debug_data_output[7] = bubblereq_from_id;
+    
+    
+    
     IF_PC_Reg if_pc_reg0(
             .clk(clk),
             .rst(rst),
@@ -206,8 +213,9 @@ module CPU_TOP (
             .PC_input(pc),
             .inst_input(inst_input),
             .PC_output(id_pc_input),
-            .inst_output(id_inst_input)
-     
+            .inst_output(id_inst_input),
+     		.is_inst_tlbl_input(mmu_is_tlbl_inst),
+			.is_inst_tlbl_output(id_is_tlbl_inst) 
         );
         
     
@@ -241,6 +249,8 @@ module CPU_TOP (
         .reg2_output(id_reg2_output),
         .waddr_output(id_waddr_output),
         .wreg_output(id_wreg_output),
+        
+        .is_tlbl_inst(id_is_tlbl_inst),
 
 
         .next_inst_in_delayslot_output(next_inst_in_delayslot_output),    
