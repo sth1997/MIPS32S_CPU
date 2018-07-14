@@ -38,7 +38,7 @@ module wishbone_bus(
     reg[`RegBus] rd_buf;
 
     wire[`RegBus] phy_wb_addr;
-    assign phy_wb_addr = cpu_addr_input;
+    assign phy_wb_addr = (cpu_addr_input[31:22] == 10'b1000000001)?{10'b1001000000, cpu_addr_input[21:0]}:cpu_addr_input;
 
     always @ (posedge clk) begin
         if(rst == `RstEnable) begin
