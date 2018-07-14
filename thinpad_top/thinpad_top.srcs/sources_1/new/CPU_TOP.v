@@ -177,6 +177,10 @@ module CPU_TOP (
 	wire[`RegBus] cp0_status;
 	wire[`RegBus] cp0_cause;
 	wire[`RegBus] cp0_epc;
+	wire[`RegBus] cp0_index;
+    wire[`RegBus] cp0_entrylo0;
+    wire[`RegBus] cp0_entrylo1;
+    wire[`RegBus] cp0_entryhi;
 	wire[4:0] cp0_raddr_input;
 	
 	wire[`TLB_WRITE_STRUCT_WIDTH - 1:0] mem_tlb_write_struct;
@@ -398,7 +402,12 @@ module CPU_TOP (
         .mem_current_inst_addr(mem_current_inst_addr_input)    
 
     );
-
+    wire mmu_is_tlb_modify;
+    wire mmu_is_tlbl_data;
+    wire mmu_is_tlbs;
+    wire[31: 0] cp0_badvaddr;
+    wire[`RegBus] mmu_badvaddr; 
+    wire mmu_we;
     mem mem0(
         .rst(rst),
         .waddr_input(mem_waddr_input),
@@ -438,7 +447,19 @@ module CPU_TOP (
 		.excepttype_o(mem_excepttype_output),
         .cp0_epc_o(latest_epc),
 		.is_in_delayslot_o(mem_is_in_delayslot_output),
-		.current_inst_addr_o(mem_current_inst_addr_output)
+		.current_inst_addr_o(mem_current_inst_addr_output),
+		
+		.badvaddr_i(mmu_badvaddr),
+		.badvaddr_o(cp0_badvaddr),
+		.is_save_inst(mmu_we),
+		.is_tlb_modify(mmu_is_tlb_modify),
+    	.is_tlbl_data(mmu_is_tlbl_data),
+		.is_tlbs(mmu_is_tlbs),
+		.cp0_index_i(cp0_index),
+		.cp0_entrylo0_i(cp0_entrylo0),
+		.cp0_entrylo1_i(cp0_entrylo1),
+		.cp0_entryhi_i(cp0_entryhi),
+		.tlb_write_struct_o(mem_tlb_write_struct)
     );
 
     MEM2WB mem2wb0(
@@ -453,7 +474,7 @@ module CPU_TOP (
         .mem_wdata(mem_wdata_output),
 		.mem_cp0_reg_we(mem_cp0_reg_we_output),
 		.mem_cp0_reg_write_addr(mem_cp0_reg_write_addr_output),
-	.mem_cp0_reg_data(mem_cp0_reg_data_output),
+		.mem_cp0_reg_data(mem_cp0_reg_data_output),
     
         .wb_waddr(wb_waddr_input),
         .wb_wreg(wb_wreg_input),
