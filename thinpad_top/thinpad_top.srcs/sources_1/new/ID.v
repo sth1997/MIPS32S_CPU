@@ -64,7 +64,7 @@ module ID(
     output wire bubble_require,
 
 
-    //input wire is_tlbl_inst,
+    input wire is_tlbl_inst,
     output wire[31: 0] excepttype_output,
     output wire[`RegBus] current_inst_addr_output
     );
@@ -84,7 +84,10 @@ module ID(
     assign pre_inst_is_load = ((ex_aluop_input == `EXE_LB_OP) || (ex_aluop_input == `EXE_LBU_OP) ||(ex_aluop_input == `EXE_LHU_OP) || (ex_aluop_input == `EXE_LW_OP))? 1'b1: 1'b0;
     assign bubble_require = bubble_require_wait_for_reg1_load | bubble_require_wait_for_reg2_load;
     
-    assign excepttype_output = {18'b0, 1'b0, excepttype_is_eret, 2'b00, instvalid, excepttype_is_syscall, 8'b0};
+    wire exc_is_tlbl_inst;
+	assign exc_is_tlbl_inst = is_tlbl_inst && (pc_input != `ZeroWord);
+    
+    assign excepttype_output = {18'b0, exc_is_tlbl_inst, excepttype_is_eret, 2'b00, instvalid, excepttype_is_syscall, 8'b0};
     
     assign inst_output = inst_input;
     assign branch_addr = (pc_input + 4) + {{14{inst_input[15]}}, inst_input[15: 0], 2'b00};
@@ -532,6 +535,16 @@ module ID(
 					  		instvalid <= `InstValid;
 					  		excepttype_is_eret <= 1'b1;
 					  	end
+				  	
+				  	if(inst_input == `EXE_TLBWI) 
+				  		begin
+					  		wreg_output <= `WriteDisable; // don't write reg_files
+					  		aluop_output <= `EXE_TLBWI_OP;
+					  		alusel_output <= `EXE_RES_NOP;
+					  		reg1_read_output <= 1'b0;
+					  		reg2_read_output <= 1'b0;
+					  		instvalid <= `InstValid;
+						end
 
                 end
         end
