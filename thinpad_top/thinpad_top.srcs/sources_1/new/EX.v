@@ -120,7 +120,19 @@ module EX(
 					cp0_reg_we_output <= `WriteEnable;
 					cp0_reg_data_output <= reg1_input;
 				end 
-			else 
+			else if(aluop_input == `EXE_TLBR_OP) 
+                begin
+                    cp0_reg_write_addr_output <= `CP0_TLBR;
+                    cp0_reg_we_output <= `WriteEnable;
+                    cp0_reg_data_output <= `ZeroWord;
+                end 
+			else if(aluop_input == `EXE_TLBP_OP) 
+                begin
+                    cp0_reg_write_addr_output <= `CP0_TLBP;
+                    cp0_reg_we_output <= `WriteEnable;
+                    cp0_reg_data_output <= `ZeroWord;
+                end 
+			else
 				begin
 					cp0_reg_write_addr_output <= 5'b00000;
 					cp0_reg_we_output <= `WriteDisable;

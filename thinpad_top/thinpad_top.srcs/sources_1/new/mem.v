@@ -62,6 +62,12 @@ module mem(
 	input wire[`RegBus] cp0_entrylo0_i,
 	input wire[`RegBus] cp0_entrylo1_i,
 	input wire[`RegBus] cp0_entryhi_i,
+	input wire[`RegBus] cp0_random_i,
+	
+    output wire tlb_read_switch,
+    output wire [`TLB_INDEX_WIDTH - 1: 0] tlb_read_index,
+    output wire [`RegBus] tlb_read_addr,
+	
 	output wire[`TLB_WRITE_STRUCT_WIDTH - 1:0] tlb_write_struct_o
 );
 
@@ -74,14 +80,15 @@ module mem(
 	reg[`RegBus] cp0_entrylo0;
 	reg[`RegBus] cp0_entrylo1;
 	reg[`RegBus] cp0_entryhi;
+	reg[`RegBus] cp0_random;
 	
 	// tlb
 	wire tlb_write_enable;
     wire [`TLB_INDEX_WIDTH-1: 0] tlb_write_index;
     wire [`TLB_ENTRY_WIDTH-1: 0] tlb_write_entry;
 
-    assign tlb_write_enable = (aluop_input == `EXE_TLBWI_OP);
-    assign tlb_write_index = cp0_index[3: 0];
+    assign tlb_write_enable = (aluop_input == `EXE_TLBWI_OP) || (aluop_input == `EXE_TLBWR_OP);
+    assign tlb_write_index = (aluop_input == `EXE_TLBWR_OP)? cp0_random[3:0] :cp0_index[3: 0];
     assign tlb_write_entry = {cp0_entryhi[31: 13], cp0_entrylo1[25: 6], cp0_entrylo1[2: 1], cp0_entrylo0[25: 6], cp0_entrylo0[2: 1]};
 	assign tlb_write_struct_o = {tlb_write_enable, tlb_write_index, tlb_write_entry};
     
@@ -91,6 +98,10 @@ module mem(
     assign cp0_epc_o = cp0_epc;	
     assign badvaddr_o = (excepttype_i[13] == 1'b1)? current_inst_addr_i: badvaddr_i;
     assign is_save_inst = mem_we;
+    
+    assign tlb_read_switch = (aluop_input == `EXE_TLBP_OP)?`TLB_READ_P:`TLB_READ_R;
+    assign tlb_read_index = cp0_index[3: 0];
+    assign tlb_read_addr = cp0_entryhi; 
 	
 	always @ (*) begin
 		if(rst == `RstEnable) begin
@@ -372,5 +383,13 @@ module mem(
 		  	cp0_entryhi <= cp0_entryhi_i;
 		end
 	end
-
-	endmodule
+    
+    always @ (*) begin
+        if (rst == `RstEnable) begin
+                cp0_random <= `ZeroWord;
+        end else begin
+            cp0_random <= cp0_random_i;
+        end
+    end
+    
+endmodule

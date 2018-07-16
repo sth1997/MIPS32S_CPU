@@ -23,7 +23,8 @@ module vir2phy(
   output wire tlb_miss,
   output wire V,
   output wire D,
-  output wire is_kseg0_kseg1
+  output wire is_kseg0_kseg1,
+  output wire [`TLB_INDEX_WIDTH - 1: 0] hit_number
 
 );
 
@@ -138,5 +139,6 @@ assign D = (virtual_addr[12]? tlb_entry[hit_index][23]: tlb_entry[hit_index][1])
 assign V = (virtual_addr[12]? tlb_entry[hit_index][22]: tlb_entry[hit_index][0]);
 assign tlb_miss = (~|hit);
 assign physical_addr_tlb = {PFN, virtual_addr[11: 0]};
+assign hit_number = hit_index;
 
 endmodule

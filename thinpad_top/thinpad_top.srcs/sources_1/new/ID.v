@@ -545,7 +545,33 @@ module ID(
 					  		reg2_read_output <= 1'b0;
 					  		instvalid <= `InstValid;
 						end
-
+                    if(inst_input == `EXE_TLBWR) 
+                        begin
+                            wreg_output <= `WriteDisable; // don't write reg_files
+                            aluop_output <= `EXE_TLBWR_OP;
+                            alusel_output <= `EXE_RES_NOP;
+                            reg1_read_output <= 1'b0;
+                            reg2_read_output <= 1'b0;
+                            instvalid <= `InstValid;
+                        end
+                    if(inst_input == `EXE_TLBR)
+                        begin
+                            aluop_output <= `EXE_TLBR_OP;
+                            alusel_output <= `EXE_RES_NOP;
+                            wreg_output <= `WriteDisable;
+                            instvalid <= `InstValid;
+                            reg1_read_output <= 1'b0;
+                            reg2_read_output <= 1'b0; 
+                        end
+                    if(inst_input == `EXE_TLBP)
+                        begin
+                            aluop_output <= `EXE_TLBP_OP;
+                            alusel_output <= `EXE_RES_NOP;
+                            wreg_output <= `WriteDisable;
+                            instvalid <= `InstValid;
+                            reg1_read_output <= 1'b0;
+                            reg2_read_output <= 1'b0; 
+                        end
                 end
         end
     

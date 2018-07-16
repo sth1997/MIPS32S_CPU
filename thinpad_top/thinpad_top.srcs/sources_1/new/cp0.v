@@ -31,9 +31,15 @@ module cp0_reg (
     output reg[`RegBus] entrylo0_o,
     output reg[`RegBus] entrylo1_o,
     output reg[`RegBus] badvaddr_o,
-    output reg[`RegBus] entryhi_o
+    output reg[`RegBus] entryhi_o,
+    output reg[`RegBus] random_o,
+    input wire[`TLB_WRITE_STRUCT_WIDTH - 1: 0] tlb_write_struct
 );
 	assign exc_vec_addr_o = {2'b10, ebase_o[29:12], 12'b0};
+    wire tlb_write_switch;
+    wire [`TLB_INDEX_WIDTH - 1: 0] tlb_write_index;
+    wire [`TLB_ENTRY_WIDTH - 1: 0] tlb_write_entry;
+	assign {tlb_write_switch, tlb_write_index, tlb_write_entry} = tlb_write_struct;
 
     always @(posedge clk) begin 
         if(rst == `RstEnable) begin
@@ -49,10 +55,12 @@ module cp0_reg (
             badvaddr_o <= `ZeroWord;
             entryhi_o <= `ZeroWord;
             index_o <= `ZeroWord;
+            random_o <= `ZeroWord;
         end 
         else begin
             count_o <= count_o + 1;
             cause_o[15: 8] <= int_i;
+            random_o <= random_o + 1;
         
             if(compare_o != `ZeroWord && count_o == compare_o) begin
                 timer_int_o <= 1'b1;
@@ -100,6 +108,20 @@ module cp0_reg (
                     `CP0_REG_ENTRYHI: begin 
                         entryhi_o[31: 13] <= data_i[31: 13];
                         entryhi_o[7: 0] <= data_i[7: 0];
+                    end
+                    `CP0_TLBR: begin
+                        if (tlb_write_switch == `TLB_READ_R) begin
+                            {entryhi_o[31: 13], entrylo1_o[25: 6], entrylo1_o[2: 1], entrylo0_o[25: 6], entrylo0_o[2: 1]} <= tlb_write_entry;
+                        end
+                    end
+                    `CP0_TLBP: begin
+                        if (tlb_write_switch == `TLB_READ_P) begin
+                            if (tlb_write_entry[0] == 1'b0) begin
+                                index_o <= {{28{1'b0}}, tlb_write_index};
+                            end else begin
+                                index_o <= {32{1'b1}};
+                            end
+                        end
                     end
                 endcase
             end

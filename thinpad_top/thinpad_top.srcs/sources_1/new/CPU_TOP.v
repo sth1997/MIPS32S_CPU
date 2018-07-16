@@ -181,6 +181,7 @@ module CPU_TOP (
     wire[`RegBus] cp0_entrylo0;
     wire[`RegBus] cp0_entrylo1;
     wire[`RegBus] cp0_entryhi;
+    wire[`RegBus] cp0_random;
 	wire[4:0] cp0_raddr_input;
 	
 	wire[`TLB_WRITE_STRUCT_WIDTH - 1:0] mem_tlb_write_struct;
@@ -408,6 +409,12 @@ module CPU_TOP (
     wire[31: 0] cp0_badvaddr;
     wire[`RegBus] mmu_badvaddr; 
     wire mmu_we;
+    
+    wire tlb_read_switch;
+    wire [`TLB_INDEX_WIDTH - 1: 0] tlb_read_index;
+    wire [`RegBus] tlb_read_addr;
+    wire[`TLB_WRITE_STRUCT_WIDTH - 1: 0] tlb_read_struct;
+    
     mem mem0(
         .rst(rst),
         .waddr_input(mem_waddr_input),
@@ -459,6 +466,12 @@ module CPU_TOP (
 		.cp0_entrylo0_i(cp0_entrylo0),
 		.cp0_entrylo1_i(cp0_entrylo1),
 		.cp0_entryhi_i(cp0_entryhi),
+		.cp0_random_i(cp0_random),
+		
+        .tlb_read_switch(tlb_read_switch),
+        .tlb_read_index(tlb_read_index),
+        .tlb_read_addr(tlb_read_addr),
+		
 		.tlb_write_struct_o(mem_tlb_write_struct)
     );
 
@@ -509,7 +522,7 @@ module CPU_TOP (
     );
 
     wire cpu_ram_ce_output;
-    assign cpu_ram_ce_output = ram_ce_output;
+    assign cpu_ram_ce_output = ram_ce_output && !mmu_is_tlbl_data && !mmu_is_tlbs;
     wire[`InstAddrBus] mmu_data_addr, mmu_inst_addr;
     //assign mmu_data_addr = ram_addr_output;
     //assign mmu_inst_addr = pc;
@@ -541,8 +554,8 @@ module CPU_TOP (
         .stallreq(bubblereq_from_mem)           
     
     );
-
-    assign rom_ce = rom_ce_output;
+    
+    assign rom_ce = rom_ce_output && !mmu_is_tlbl_inst;
 
     wishbone_bus iwishbone_bus( // instruction bus
         .clk(clk),
@@ -584,7 +597,7 @@ module CPU_TOP (
 		.int_i(int_input),
 		.current_inst_addr_i(mem_current_inst_addr_output),
 		.is_in_delayslot_i(mem_is_in_delayslot_output),
-        .unaligned_addr_i(mem_unliagned_addr_o),
+        .unaligned_addr_i(mem_unliagned_addr_output),
         .badvaddr_i(cp0_badvaddr),
         
         .exc_vec_addr_o(exc_vector_addr),
@@ -599,8 +612,11 @@ module CPU_TOP (
 		.entrylo0_o(cp0_entrylo0),
 		.entrylo1_o(cp0_entrylo1),
 		.entryhi_o(cp0_entryhi),
+		.random_o(cp0_random),
 		
-		.timer_int_o(timer_int_output)  			
+		.timer_int_o(timer_int_output),
+		
+		.tlb_write_struct(tlb_read_struct)  			
 	);
     
     mmu mmu0(
@@ -616,7 +632,12 @@ module CPU_TOP (
     	.is_tlbl_data(mmu_is_tlbl_data),
     	.is_tlbl_inst(mmu_is_tlbl_inst),
     	.is_tlbs(mmu_is_tlbs),
-    	.badvaddr(mmu_badvaddr)
+    	.badvaddr(mmu_badvaddr),
+    	
+        .tlb_read_switch(tlb_read_switch),
+        .tlb_read_index(tlb_read_index),
+        .tlb_read_addr(tlb_read_addr),
+        .tlb_read_struct(tlb_read_struct)
 	);
 
 endmodule
