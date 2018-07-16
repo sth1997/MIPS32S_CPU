@@ -47,6 +47,7 @@ module mem(
 	output reg[`RegBus]         cp0_reg_data_o,
 	output reg[31: 0]           excepttype_o,
 	output wire[`RegBus]        current_inst_addr_o,
+	output wire[`RegBus]        unaligned_addr_o,
 	output wire[`RegBus]        cp0_epc_o,
 	output wire                 is_in_delayslot_o,
 	
@@ -95,6 +96,7 @@ module mem(
 	assign mem_we_output = mem_we & (~(|excepttype_o));
     assign is_in_delayslot_o = is_in_delayslot_i;
 	assign current_inst_addr_o = current_inst_addr_i;
+	assign unaligned_addr_o = mem_addr_input;
     assign cp0_epc_o = cp0_epc;	
     assign badvaddr_o = (excepttype_i[13] == 1'b1)? current_inst_addr_i: badvaddr_i;
     assign is_save_inst = mem_we;

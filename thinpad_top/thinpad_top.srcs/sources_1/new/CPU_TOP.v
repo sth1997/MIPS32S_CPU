@@ -455,6 +455,7 @@ module CPU_TOP (
         .cp0_epc_o(latest_epc),
 		.is_in_delayslot_o(mem_is_in_delayslot_output),
 		.current_inst_addr_o(mem_current_inst_addr_output),
+		.unaligned_addr_o(mem_unliagned_addr_output),
 		
 		.badvaddr_i(mmu_badvaddr),
 		.badvaddr_o(cp0_badvaddr),
