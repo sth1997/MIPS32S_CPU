@@ -511,8 +511,8 @@ module CPU_TOP (
     wire cpu_ram_ce_output;
     assign cpu_ram_ce_output = ram_ce_output;
     wire[`InstAddrBus] mmu_data_addr, mmu_inst_addr;
-    assign mmu_data_addr = ram_addr_output;
-    assign mmu_inst_addr = pc;
+    //assign mmu_data_addr = ram_addr_output;
+    //assign mmu_inst_addr = pc;
     
     wishbone_bus dwishbone_bus( 
         .clk(clk),
