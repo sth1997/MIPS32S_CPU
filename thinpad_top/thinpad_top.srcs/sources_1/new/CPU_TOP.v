@@ -584,8 +584,10 @@ module CPU_TOP (
 		.int_i(int_input),
 		.current_inst_addr_i(mem_current_inst_addr_output),
 		.is_in_delayslot_i(mem_is_in_delayslot_output),
+        .unaligned_addr_i(mem_unliagned_addr_o),
+        .badvaddr_i(cp0_badvaddr),
+        
         .exc_vec_addr_o(exc_vector_addr),
-
 		.data_o(cp0_data_output),
 		.count_o(cp0_count),
 		.compare_o(cp0_compare),
@@ -593,8 +595,28 @@ module CPU_TOP (
 		.cause_o(cp0_cause),
 		.epc_o(cp0_epc),
         .ebase_o(),
+        .index_o(cp0_index),
+		.entrylo0_o(cp0_entrylo0),
+		.entrylo1_o(cp0_entrylo1),
+		.entryhi_o(cp0_entryhi),
 		
 		.timer_int_o(timer_int_output)  			
+	);
+    
+    mmu mmu0(
+		.clk(clk),
+		.rst(rst),
+ 		.inst_addr_i(pc), 
+     	.data_addr_i(ram_addr_output), 
+        .inst_addr_o(mmu_inst_addr), 
+     	.data_addr_o(mmu_data_addr),
+     	.is_write_mem(mmu_we),
+   		.tlb_write_struct(mem_tlb_write_struct),
+   		.is_tlb_modify(mmu_is_tlb_modify),
+    	.is_tlbl_data(mmu_is_tlbl_data),
+    	.is_tlbl_inst(mmu_is_tlbl_inst),
+    	.is_tlbs(mmu_is_tlbs),
+    	.badvaddr(mmu_badvaddr)
 	);
 
 endmodule
