@@ -188,6 +188,25 @@ module CPU_TOP (
 	wire mmu_is_tlbl_inst;
 	wire id_is_tlbl_inst;
     
+    wire[`RegBus] ex_hi_output;
+	wire[`RegBus] ex_lo_output;
+	wire ex_whilo_output;
+    
+    wire[`RegBus] mem_hi_input;
+	wire[`RegBus] mem_lo_input;
+	wire mem_whilo_input;
+	
+	wire[`RegBus] mem_hi_output;
+	wire[`RegBus] mem_lo_output;
+	wire mem_whilo_output;
+	
+	wire[`RegBus] wb_hi_input;
+	wire[`RegBus] wb_lo_input;
+	wire wb_whilo_input;
+	
+	wire[`RegBus] 	hi;
+	wire[`RegBus] lo;
+    
     wire [15:0] debug_reg_output;
     assign debug_led_output = (sw[7]) ? pc[15:0] : ((sw[6])?pc[31:16]:debug_reg_output);
     
@@ -335,6 +354,23 @@ module CPU_TOP (
         .waddr_input(ex_waddr_input),
         .wreg_input(ex_wreg_input),
         .inst_input(ex_inst_input),
+        
+        
+        .hi_input(hi),
+		.lo_input(lo),
+
+	  	.wb_hi_input(wb_hi_input),
+	  	.wb_lo_input(wb_lo_input),
+	  	.wb_whilo_input(wb_whilo_input),
+	  	
+	  	.mem_hi_input(mem_hi_output),
+	  	.mem_lo_input(mem_lo_output),
+		.mem_whilo_input(mem_whilo_output),
+		
+		.hi_output(ex_hi_output),
+		.lo_output(ex_lo_output),
+		.whilo_output(ex_whilo_output),
+		
 
         .link_addr_input(ex_link_addr_input),
         .is_in_delayslot_input(ex_is_in_delayslot_input),
@@ -388,6 +424,9 @@ module CPU_TOP (
 		.ex_excepttype(ex_excepttype_output),
         .ex_is_in_delayslot(ex_is_in_delayslot_output),
         .ex_current_inst_addr(ex_current_inst_addr_output),
+        .ex_hi(ex_hi_output),
+		.ex_lo(ex_lo_output),
+		.ex_whilo(ex_whilo_output), 
 
         .mem_waddr(mem_waddr_input),
         .mem_wreg(mem_wreg_input),
@@ -400,7 +439,10 @@ module CPU_TOP (
 		.mem_cp0_reg_data(mem_cp0_reg_data_input),
 		.mem_excepttype(mem_excepttype_input),
         .mem_is_in_delayslot(mem_is_in_delayslot_input),
-        .mem_current_inst_addr(mem_current_inst_addr_input)    
+        .mem_current_inst_addr(mem_current_inst_addr_input),
+        .mem_hi(mem_hi_input),
+		.mem_lo(mem_lo_input),
+		.mem_whilo(mem_whilo_input)    
 
     );
     wire mmu_is_tlb_modify;
@@ -423,18 +465,21 @@ module CPU_TOP (
         .aluop_input(mem_aluop_input),
         .mem_addr_input(mem_mem_addr_input),
         .reg2_input(mem_reg2_input),
-        .cp0_reg_we_i(mem_cp0_reg_we_input),
-		.cp0_reg_write_addr_i(mem_cp0_reg_write_addr_input),
-		.cp0_reg_data_i(mem_cp0_reg_data_input),
-		.excepttype_i(mem_excepttype_input),
-		.is_in_delayslot_i(mem_is_in_delayslot_input),
-		.current_inst_addr_i(mem_current_inst_addr_input),
-        .cp0_status_i(cp0_status),
-		.cp0_cause_i(cp0_cause),
-		.cp0_epc_i(cp0_epc),
+        .cp0_reg_we_input(mem_cp0_reg_we_input),
+		.cp0_reg_write_addr_input(mem_cp0_reg_write_addr_input),
+		.cp0_reg_data_input(mem_cp0_reg_data_input),
+		.excepttype_input(mem_excepttype_input),
+		.is_in_delayslot_input(mem_is_in_delayslot_input),
+		.current_inst_addr_input(mem_current_inst_addr_input),
+        .cp0_status_input(cp0_status),
+		.cp0_cause_input(cp0_cause),
+		.cp0_epc_input(cp0_epc),
   		.wb_cp0_reg_we(wb_cp0_reg_we_input),
 		.wb_cp0_reg_write_addr(wb_cp0_reg_write_addr_input),
 		.wb_cp0_reg_data(wb_cp0_reg_data_input),
+		.hi_input(mem_hi_input),
+		.lo_input(mem_lo_input),
+		.whilo_input(mem_whilo_input), 
         
         .mem_data_input(ram_data_input),    
       
@@ -448,32 +493,35 @@ module CPU_TOP (
         .wreg_output(mem_wreg_output),
         .wdata_output(mem_wdata_output),
         
-        .cp0_reg_we_o(mem_cp0_reg_we_output),
-		.cp0_reg_write_addr_o(mem_cp0_reg_write_addr_output),
-		.cp0_reg_data_o(mem_cp0_reg_data_output),
-		.excepttype_o(mem_excepttype_output),
-        .cp0_epc_o(latest_epc),
-		.is_in_delayslot_o(mem_is_in_delayslot_output),
-		.current_inst_addr_o(mem_current_inst_addr_output),
-		.unaligned_addr_o(mem_unliagned_addr_output),
+        .cp0_reg_we_output(mem_cp0_reg_we_output),
+		.cp0_reg_write_addr_output(mem_cp0_reg_write_addr_output),
+		.cp0_reg_data_output(mem_cp0_reg_data_output),
+		.excepttype_output(mem_excepttype_output),
+        .cp0_epc_output(latest_epc),
+		.is_in_delayslot_output(mem_is_in_delayslot_output),
+		.current_inst_addr_output(mem_current_inst_addr_output),
+		.unaligned_addr_output(mem_unliagned_addr_output),
 		
-		.badvaddr_i(mmu_badvaddr),
-		.badvaddr_o(cp0_badvaddr),
+		.badvaddr_input(mmu_badvaddr),
+		.badvaddr_output(cp0_badvaddr),
 		.is_save_inst(mmu_we),
 		.is_tlb_modify(mmu_is_tlb_modify),
     	.is_tlbl_data(mmu_is_tlbl_data),
 		.is_tlbs(mmu_is_tlbs),
-		.cp0_index_i(cp0_index),
-		.cp0_entrylo0_i(cp0_entrylo0),
-		.cp0_entrylo1_i(cp0_entrylo1),
-		.cp0_entryhi_i(cp0_entryhi),
-		.cp0_random_i(cp0_random),
+		.cp0_index_input(cp0_index),
+		.cp0_entrylo0_input(cp0_entrylo0),
+		.cp0_entrylo1_input(cp0_entrylo1),
+		.cp0_entryhi_input(cp0_entryhi),
+		.cp0_random_input(cp0_random),
+		.hi_output(mem_hi_output),
+		.lo_output(mem_lo_output),
+		.whilo_output(mem_whilo_output),
 		
         .tlb_read_switch(tlb_read_switch),
         .tlb_read_index(tlb_read_index),
         .tlb_read_addr(tlb_read_addr),
 		
-		.tlb_write_struct_o(mem_tlb_write_struct)
+		.tlb_write_struct_output(mem_tlb_write_struct)
     );
 
     MEM2WB mem2wb0(
@@ -489,6 +537,9 @@ module CPU_TOP (
 		.mem_cp0_reg_we(mem_cp0_reg_we_output),
 		.mem_cp0_reg_write_addr(mem_cp0_reg_write_addr_output),
 		.mem_cp0_reg_data(mem_cp0_reg_data_output),
+		.mem_hi(mem_hi_output),
+		.mem_lo(mem_lo_output),
+		.mem_whilo(mem_whilo_output),
     
         .wb_waddr(wb_waddr_input),
         .wb_wreg(wb_wreg_input),
@@ -496,6 +547,9 @@ module CPU_TOP (
 		.wb_cp0_reg_we(wb_cp0_reg_we_input),
 		.wb_cp0_reg_write_addr(wb_cp0_reg_write_addr_input),
 		.wb_cp0_reg_data(wb_cp0_reg_data_input),
+		.wb_hi(wb_hi_input),
+		.wb_lo(wb_lo_input),
+		.wb_whilo(wb_whilo_input),
 		
 		.tlb_read_struct(tlb_read_struct),  
         .tlb_write_struct(wb_tlb_write_struct)                                       
@@ -591,44 +645,56 @@ module CPU_TOP (
 		.clk(clk),
 		.rst(rst),
 		
-		.we_i(wb_cp0_reg_we_input),
-		.waddr_i(wb_cp0_reg_write_addr_input),
-		.raddr_i(cp0_raddr_input),
-		.data_i(wb_cp0_reg_data_input),
+		.we_input(wb_cp0_reg_we_input),
+		.waddr_input(wb_cp0_reg_write_addr_input),
+		.raddr_input(cp0_raddr_input),
+		.data_input(wb_cp0_reg_data_input),
 		
-		.excepttype_i(mem_excepttype_output),
-		.int_i(int_input),
-		.current_inst_addr_i(mem_current_inst_addr_output),
-		.is_in_delayslot_i(mem_is_in_delayslot_output),
-        .unaligned_addr_i(mem_unliagned_addr_output),
-        .badvaddr_i(cp0_badvaddr),
+		.excepttype_input(mem_excepttype_output),
+		.int_input(int_input),
+		.current_inst_addr_input(mem_current_inst_addr_output),
+		.is_in_delayslot_input(mem_is_in_delayslot_output),
+        .unaligned_addr_input(mem_unliagned_addr_output),
+        .badvaddr_input(cp0_badvaddr),
         
-        .exc_vec_addr_o(exc_vector_addr),
-		.data_o(cp0_data_output),
-		.count_o(cp0_count),
-		.compare_o(cp0_compare),
-		.status_o(cp0_status),
-		.cause_o(cp0_cause),
-		.epc_o(cp0_epc),
-        .ebase_o(),
-        .index_o(cp0_index),
-		.entrylo0_o(cp0_entrylo0),
-		.entrylo1_o(cp0_entrylo1),
-		.entryhi_o(cp0_entryhi),
-		.random_o(cp0_random),
+        .exc_vec_addr_output(exc_vector_addr),
+		.data_output(cp0_data_output),
+		.count_output(cp0_count),
+		.compare_output(cp0_compare),
+		.status_output(cp0_status),
+		.cause_output(cp0_cause),
+		.epc_output(cp0_epc),
+        .ebase_output(),
+        .index_output(cp0_index),
+		.entrylo0_output(cp0_entrylo0),
+		.entrylo1_output(cp0_entrylo1),
+		.entryhi_output(cp0_entryhi),
+		.random_output(cp0_random),
 		
-		.timer_int_o(timer_int_output),
+		.timer_int_output(timer_int_output),
 		
 		.tlb_write_struct(wb_tlb_write_struct)  			
+	);
+	
+	hilo_reg hilo_reg0(
+		.clk(clk),
+		.rst(rst),
+	
+		.we(wb_whilo_input),
+		.hi_input(wb_hi_input),
+		.lo_input(wb_lo_input),
+	
+		.hi_output(hi),
+		.lo_output(lo)	
 	);
     
     mmu mmu0(
 		.clk(clk),
 		.rst(rst),
- 		.inst_addr_i(pc), 
-     	.data_addr_i(ram_addr_output), 
-        .inst_addr_o(mmu_inst_addr), 
-     	.data_addr_o(mmu_data_addr),
+ 		.inst_addr_input(pc), 
+     	.data_addr_input(ram_addr_output), 
+        .inst_addr_output(mmu_inst_addr), 
+     	.data_addr_output(mmu_data_addr),
      	.is_write_mem(mmu_we),
    		.tlb_write_struct(mem_tlb_write_struct),
    		.is_tlb_modify(mmu_is_tlb_modify),

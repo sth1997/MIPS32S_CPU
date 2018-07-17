@@ -4,10 +4,10 @@ module mmu (
     input wire clk,
     input wire rst,
 
-    input wire[`RegBus] inst_addr_i, // virtual address
-    output wire[`RegBus] inst_addr_o, // physical address, send to IF
-    input wire[`RegBus] data_addr_i, // virtual addrress
-    output wire[`RegBus] data_addr_o, // physical address, send to MEM
+    input wire[`RegBus] inst_addr_input, // virtual address
+    output wire[`RegBus] inst_addr_output, // physical address, send to IF
+    input wire[`RegBus] data_addr_input, // virtual addrress
+    output wire[`RegBus] data_addr_output, // physical address, send to MEM
 
     input wire[`TLB_WRITE_STRUCT_WIDTH - 1: 0] tlb_write_struct, // items to be written in TLB
     input wire is_write_mem,
@@ -43,11 +43,11 @@ module mmu (
     
     wire [`TLB_INDEX_WIDTH - 1: 0] hit_index;
     
-    assign is_tlb_modify = (!data_is_kseg0_kseg1) && (data_addr_i != `ZeroWord) && is_write_mem && !data_D;
-    assign is_tlbs = (!data_is_kseg0_kseg1) && (data_addr_i != `ZeroWord) && is_write_mem && (data_miss || !data_V);
-    assign is_tlbl_inst = (!inst_is_kseg0_kseg1) && (inst_addr_i != `ZeroWord) && !is_write_mem && (inst_miss || !inst_V);
-    assign is_tlbl_data = (!data_is_kseg0_kseg1) && (data_addr_i != `ZeroWord) && !is_write_mem && (data_miss || !data_V);
-    assign badvaddr = is_tlbl_inst? inst_addr_i: data_addr_i;
+    assign is_tlb_modify = (!data_is_kseg0_kseg1) && (data_addr_input != `ZeroWord) && is_write_mem && !data_D;
+    assign is_tlbs = (!data_is_kseg0_kseg1) && (data_addr_input != `ZeroWord) && is_write_mem && (data_miss || !data_V);
+    assign is_tlbl_inst = (!inst_is_kseg0_kseg1) && (inst_addr_input != `ZeroWord) && !is_write_mem && (inst_miss || !inst_V);
+    assign is_tlbl_data = (!data_is_kseg0_kseg1) && (data_addr_input != `ZeroWord) && !is_write_mem && (data_miss || !data_V);
+    assign badvaddr = is_tlbl_inst? inst_addr_input: data_addr_input;
 
     assign {tlb_write_enable, tlb_write_index, tlb_write_entry} = tlb_write_struct;
     
@@ -110,8 +110,8 @@ module mmu (
         .tlb_entry_14(tlb_entry[14]),
         .tlb_entry_15(tlb_entry[15]),
 
-        .physical_addr(inst_addr_o),
-        .virtual_addr(inst_addr_i),
+        .physical_addr(inst_addr_output),
+        .virtual_addr(inst_addr_input),
         .tlb_miss(inst_miss),
         .V(inst_V),
         .D(inst_D),
@@ -138,8 +138,8 @@ module mmu (
         .tlb_entry_14(tlb_entry[14]),
         .tlb_entry_15(tlb_entry[15]),
 
-        .physical_addr(data_addr_o),
-        .virtual_addr(data_addr_i),
+        .physical_addr(data_addr_output),
+        .virtual_addr(data_addr_input),
         .tlb_miss(data_miss),
         .V(data_V),
         .D(data_D),

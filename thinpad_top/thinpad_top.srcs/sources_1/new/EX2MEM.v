@@ -28,6 +28,14 @@ module EX2MEM(
 	input wire rst,
 	
 	input wire[5: 0] bubble_notice,
+	
+	input wire ex_whilo,
+	input wire[`RegBus] ex_hi, 		
+	input wire[`RegBus] ex_lo,
+	
+	output reg mem_whilo,
+	output reg[`RegBus] mem_hi, 		
+	output reg[`RegBus] mem_lo,
 
 	input wire[`RegAddrBus] ex_waddr,
 	input wire ex_wreg,
@@ -81,6 +89,9 @@ module EX2MEM(
                     mem_cp0_reg_we <= `WriteDisable;
 					mem_cp0_reg_write_addr <= 5'b00000;
 					mem_cp0_reg_data <= `ZeroWord;
+					mem_whilo <= `WriteDisable;
+				  	mem_hi <= `ZeroWord;
+					mem_lo <= `ZeroWord;
                 end
             else if(bubble_notice[3] == `Stop && bubble_notice[4] == `NoStop) 
                 begin
@@ -95,7 +106,10 @@ module EX2MEM(
                     mem_is_in_delayslot <= `NotInDelaySlot;		
                     mem_cp0_reg_we <= `WriteDisable;
 					mem_cp0_reg_write_addr <= 5'b00000;
-					mem_cp0_reg_data <= `ZeroWord;	  				    
+					mem_cp0_reg_data <= `ZeroWord;	
+					mem_whilo <= `WriteDisable;
+		  			mem_hi <= `ZeroWord;
+					mem_lo <= `ZeroWord;  				    
                 end 
             else if(bubble_notice[3] == `NoStop) 
                 begin
@@ -111,6 +125,9 @@ module EX2MEM(
                     mem_cp0_reg_we <= ex_cp0_reg_we;
 					mem_cp0_reg_write_addr <= ex_cp0_reg_write_addr;
 					mem_cp0_reg_data <= ex_cp0_reg_data;
+					mem_whilo <= ex_whilo;
+		  			mem_hi <= ex_hi;
+					mem_lo <= ex_lo; 
                 end 
         end
 			

@@ -14,6 +14,22 @@ module EX(
 	input wire[`RegBus] link_addr_input,
 	input wire[`RegBus] inst_input,
 	
+	//hilo_reg
+	input wire[`RegBus] hi_input,
+	input wire[`RegBus] lo_input,
+
+	input wire mem_whilo_input,
+	input wire[`RegBus] mem_hi_input,
+	input wire[`RegBus] mem_lo_input,
+	
+	input wire wb_whilo_input,
+	input wire[`RegBus] wb_hi_input,
+	input wire[`RegBus] wb_lo_input,
+	
+	output reg whilo_output,
+	output reg[`RegBus] hi_output,
+	output reg[`RegBus] lo_output,
+	
 	input wire mem_cp0_reg_we,
 	input wire[4: 0] mem_cp0_reg_write_addr,
 	input wire[`RegBus] mem_cp0_reg_data,
@@ -52,10 +68,17 @@ module EX(
 	reg[`RegBus] shiftres;
 	reg[`RegBus] moveres;
 	reg[`RegBus] arithres;
+	reg[`RegBus] HI;
+	reg[`RegBus] LO;
 
 	wire reg1_lt_reg2;
 	wire[`RegBus] reg2_input_mux;
 	wire[`RegBus] result_sum;
+	
+	wire[`RegBus] mult_op1;
+	wire[`RegBus] mult_op2;
+	wire[`DoubleRegBus] hilo_temp;
+	reg[`DoubleRegBus] mulres;
 	
 	wire is_ADEL, is_ADES;
     assign is_ADES = (aluop_output == `EXE_SW_OP && mem_addr_output[1: 0] != 2'b00);
@@ -64,7 +87,87 @@ module EX(
 	assign current_inst_addr_output = current_inst_addr_input;
 	assign is_in_delayslot_output = is_in_delayslot_input;
 	assign excepttype_output = {excepttype_input[31: 12], is_ADES, is_ADEL, excepttype_input[9: 0]};
-
+	
+	always @ (*) 
+		begin 
+			if(rst == `RstEnable) 
+				begin	
+					{HI, LO} <= {`ZeroWord, `ZeroWord};
+				end
+			else if(mem_whilo_input == `WriteEnable) 
+				begin
+					{HI, LO} <= {mem_hi_input, mem_lo_input};
+				end
+			else if(wb_whilo_input == `WriteEnable) 
+				begin
+					{HI, LO} <= {wb_hi_input, wb_lo_input};
+				end	
+			else 
+				begin
+					{HI, LO} <= {hi_input, lo_input};
+				end
+		end
+		
+	always @ (*) 
+		begin 
+			if(rst == `RstEnable) 
+				begin
+					whilo_output <= `WriteDisable;
+					hi_output <= `ZeroWord;
+					lo_output <= `ZeroWord;
+				end
+			else 
+				begin 
+					case (aluop_input)
+						`EXE_MTHI_OP: 
+							begin 
+								whilo_output <= `WriteEnable;
+								hi_output <= reg1_input;
+								lo_output <= LO;
+							end
+						`EXE_MTLO_OP: 
+							begin 
+								whilo_output <= `WriteEnable;
+								hi_output <= HI;
+								lo_output <= reg1_input;
+							end
+						`EXE_MULT_OP: 
+							begin 
+								whilo_output <= `WriteEnable;
+								hi_output <= mulres[63: 32];
+								lo_output <= mulres[31: 0];
+							end
+						default : 
+							begin
+								whilo_output <= `WriteDisable;
+								hi_output <= `ZeroWord;
+								lo_output <= `ZeroWord;
+							end // default
+					endcase
+				end // else
+		end
+		
+	assign mult_op1 = (reg1_input[31] == 1'b1)? (~reg1_input + 1): reg1_input;
+    assign mult_op2 = (reg2_input[31] == 1'b1)? (~reg2_input + 1): reg2_input;
+    assign hilo_temp = mult_op1 * mult_op2;
+    always @ (*) 
+    	begin 
+			if(rst == `RstEnable) 
+				begin
+					mulres <= {`ZeroWord, `ZeroWord};
+				end
+			else if(aluop_input == `EXE_MULT_OP) 
+				begin
+					if(reg1_input[31] ^ reg2_input[31] == 1'b1) 
+						begin
+							mulres <= ~hilo_temp + 1;
+						end
+					else 
+						begin
+							mulres <= hilo_temp;
+						end // else
+				end	 // else if 
+		end // always
 	always @ (*) 
 		begin
 			if(rst == `RstEnable) 
@@ -74,7 +177,6 @@ module EX(
 			else 
 				begin 
 					case (aluop_input)
-					/*
 						`EXE_MFHI_OP: 
 							begin
 								moveres <= HI;
@@ -83,7 +185,6 @@ module EX(
 							begin
 								moveres <= LO;
 							end
-					*/
 						`EXE_MFC0_OP: 
 							begin 
 								cp0_reg_read_addr_output <= inst_input[15: 11];

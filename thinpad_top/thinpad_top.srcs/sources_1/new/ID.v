@@ -302,6 +302,55 @@ module ID(
                                                         reg1_read_output <= 1'b1;
                                                         reg2_read_output <= 1'b1;
                                                     end
+                                                    
+								                                //move
+						  						`EXE_MFHI: 
+							  						begin
+							  							wreg_output <= `WriteEnable;
+							  							aluop_output <= `EXE_MFHI_OP;
+							  							alusel_output <= `EXE_RES_MOVE;
+							  							reg1_read_output <= 1'b0;
+							  							reg2_read_output <= 1'b0;
+							  							instvalid <= `InstValid;
+							  						end
+						  						`EXE_MFLO: 
+							  						begin
+							  							wreg_output <= `WriteEnable;
+							  							aluop_output <= `EXE_MFLO_OP;
+							  							alusel_output <= `EXE_RES_MOVE;
+							  							reg1_read_output <= 1'b0;
+							  							reg2_read_output <= 1'b0;
+							  							instvalid <= `InstValid;
+							  						end
+						  						`EXE_MTHI: 
+							  						begin
+							  							wreg_output <= `WriteDisable;
+							  							aluop_output <= `EXE_MTHI_OP;
+							  							alusel_output <= `EXE_RES_MOVE;
+							  							reg1_read_output <= 1'b1;
+							  							reg2_read_output <= 1'b0;
+							  							instvalid <= `InstValid;
+							  						end
+						  						`EXE_MTLO: 
+							  						begin
+							  							wreg_output <= `WriteDisable;
+							  							aluop_output <= `EXE_MTLO_OP;
+							  							alusel_output <= `EXE_RES_MOVE;
+							  							reg1_read_output <= 1'b1;
+							  							reg2_read_output <= 1'b0;
+							  							instvalid <= `InstValid;
+							  						end
+
+                                                `EXE_MULT: 
+                                                	begin
+							  							wreg_output <= `WriteDisable;
+							  							aluop_output <= `EXE_MULT_OP;
+							  							// alusel_output <= `EXE_RES_NOP;
+							  							reg1_read_output <= 1'b1;
+							  							reg2_read_output <= 1'b1;
+							  							instvalid <= `InstValid;
+													end
+                                                    
                                                 `EXE_SYSCALL: 
                                                 	begin 
 							  							wreg_output <= `WriteDisable;

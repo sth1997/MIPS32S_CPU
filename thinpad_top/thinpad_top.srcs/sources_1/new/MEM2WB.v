@@ -12,6 +12,10 @@ module MEM2WB(
 	input wire mem_wreg,
 	input wire[`RegBus] mem_wdata,
 	
+	input wire mem_whilo,
+	input wire[`RegBus] mem_hi,
+	input wire[`RegBus] mem_lo,
+	
 	input wire mem_cp0_reg_we,
 	input wire[4:0] mem_cp0_reg_write_addr,
 	input wire[`RegBus] mem_cp0_reg_data,
@@ -22,9 +26,15 @@ module MEM2WB(
 	output reg[`RegAddrBus] wb_waddr,
 	output reg wb_wreg,
 	output reg[`RegBus] wb_wdata,
+	
+	output reg wb_whilo,
+	output reg[`RegBus] wb_hi,
+	output reg[`RegBus] wb_lo,
+	
 	output reg wb_cp0_reg_we,
 	output reg[4:0] wb_cp0_reg_write_addr,
 	output reg[`RegBus] wb_cp0_reg_data,
+	
 	
 	input wire[`TLB_WRITE_STRUCT_WIDTH - 1: 0] tlb_read_struct,
 	output reg[`TLB_WRITE_STRUCT_WIDTH - 1: 0] tlb_write_struct
@@ -38,6 +48,9 @@ module MEM2WB(
                     wb_waddr <= `NOPRegAddr;
                     wb_wreg <= `WriteDisable;
                     wb_wdata <= `ZeroWord;	
+                    wb_whilo <= `WriteDisable;
+		  			wb_hi <= `ZeroWord;
+					wb_lo <= `ZeroWord;
                     wb_cp0_reg_we <= `WriteDisable;
 					wb_cp0_reg_write_addr <= 5'b00000;
 					wb_cp0_reg_data <= `ZeroWord;
@@ -47,7 +60,10 @@ module MEM2WB(
                 begin
                     wb_waddr <= `NOPRegAddr;
                     wb_wreg <= `WriteDisable;
-                    wb_wdata <= `ZeroWord; 	  
+                    wb_wdata <= `ZeroWord;
+                    wb_whilo <= `WriteDisable;
+		  			wb_hi <= `ZeroWord;
+					wb_lo <= `ZeroWord; 	  
                     wb_cp0_reg_we <= `WriteDisable;
 					wb_cp0_reg_write_addr <= 5'b00000;
 					wb_cp0_reg_data <= `ZeroWord;
@@ -58,6 +74,9 @@ module MEM2WB(
                     wb_waddr <= mem_waddr;
                     wb_wreg <= mem_wreg;
                     wb_wdata <= mem_wdata;
+                    wb_whilo <= mem_whilo;
+            		wb_hi <= mem_hi;
+					wb_lo <= mem_lo;
                     wb_cp0_reg_we <= mem_cp0_reg_we;
 					wb_cp0_reg_write_addr <= mem_cp0_reg_write_addr;
 					wb_cp0_reg_data <= mem_cp0_reg_data;
