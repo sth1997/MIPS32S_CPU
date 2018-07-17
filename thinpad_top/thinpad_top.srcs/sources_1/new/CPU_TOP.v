@@ -413,7 +413,7 @@ module CPU_TOP (
     wire tlb_read_switch;
     wire [`TLB_INDEX_WIDTH - 1: 0] tlb_read_index;
     wire [`RegBus] tlb_read_addr;
-    wire[`TLB_WRITE_STRUCT_WIDTH - 1: 0] tlb_read_struct;
+    wire[`TLB_WRITE_STRUCT_WIDTH - 1: 0] tlb_read_struct, wb_tlb_write_struct;
     
     mem mem0(
         .rst(rst),
@@ -495,8 +495,10 @@ module CPU_TOP (
         .wb_wdata(wb_wdata_input),
 		.wb_cp0_reg_we(wb_cp0_reg_we_input),
 		.wb_cp0_reg_write_addr(wb_cp0_reg_write_addr_input),
-		.wb_cp0_reg_data(wb_cp0_reg_data_input)  
-                                               
+		.wb_cp0_reg_data(wb_cp0_reg_data_input),
+		
+		.tlb_read_struct(tlb_read_struct),  
+        .tlb_write_struct(wb_tlb_write_struct)                                       
     );
 
 
@@ -617,7 +619,7 @@ module CPU_TOP (
 		
 		.timer_int_o(timer_int_output),
 		
-		.tlb_write_struct(tlb_read_struct)  			
+		.tlb_write_struct(wb_tlb_write_struct)  			
 	);
     
     mmu mmu0(

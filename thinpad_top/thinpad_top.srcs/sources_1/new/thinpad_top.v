@@ -89,8 +89,7 @@ module thinpad_top(
     end
     */
     assign rst = reset_btn;
-    //assign clk_o = (dip_sw[8])?clk_50M:((dip_sw[0])?clock_btn:clk_11M0592);
-    assign clk_o = (dip_sw[8])?clk_50M:clock_btn;
+    assign clk_o = (dip_sw[8])?clk_50M:((dip_sw[9])?clock_btn:clk_11M0592);
 
     //inst wb
     wire [31:0] inst_data_i;

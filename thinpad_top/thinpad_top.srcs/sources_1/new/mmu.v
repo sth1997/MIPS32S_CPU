@@ -52,7 +52,7 @@ module mmu (
     assign {tlb_write_enable, tlb_write_index, tlb_write_entry} = tlb_write_struct;
     
     assign tlb_read_struct = (tlb_read_switch == `TLB_READ_R)?{tlb_read_switch, tlb_read_index, tlb_entry[tlb_read_index]}
-        :{tlb_read_switch, (read_tlb_miss || read_tlb_is_kseg0_kseg1)?{4'b1111, {`TLB_ENTRY_WIDTH{1'b1}} }:{hit_index, {`TLB_ENTRY_WIDTH{1'b0}} }};
+        :{tlb_read_switch, (read_tlb_miss)?{4'b1111, {`TLB_ENTRY_WIDTH{1'b1}} }:{hit_index, {`TLB_ENTRY_WIDTH{1'b0}} }};
 
     always @(posedge clk) begin
         if (rst == `RstEnable) begin : your_name 
