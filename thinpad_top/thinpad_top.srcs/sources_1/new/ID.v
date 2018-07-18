@@ -247,6 +247,17 @@ module ID(
                                                 waddr_output <= inst_input[15: 11];
 				  								instvalid <= `InstValid;
                                             end
+                                        if(op3 == `EXE_SRA) 
+		                                    begin
+									  			wreg_output <= `WriteEnable;
+									  			aluop_output <= `EXE_SRA_OP;
+									  			alusel_output <= `EXE_RES_SHIFT;
+									  			reg1_read_output <= 1'b0;
+									  			reg2_read_output <= 1'b1;
+									  			imm[4: 0] <= inst_input[10: 6];
+									  			waddr_output <= inst_input[15: 11];
+									  			instvalid <= `InstValid;
+											end
                                     end
                                 case (inst_input[10:6])
                                     5'b00000:
@@ -270,6 +281,21 @@ module ID(
                                                         reg2_read_output <= 1'b1;
 				  										instvalid <= `InstValid;
                                                     end
+                                                `EXE_JALR: 
+                                                	begin
+							  							wreg_output <= `WriteEnable;
+							  							aluop_output <= `EXE_JALR_OP;
+							  							alusel_output <= `EXE_RES_JUMP_BRANCH;
+							  							reg1_read_output <= 1'b1;
+							  							reg2_read_output <= 1'b0;
+							  							waddr_output <= inst_input[15: 11];
+							  							
+							  							link_addr_output <= pc_plus_8;
+														branch_target_addr_output <= reg1_output;
+														branch_flag_output <= `Branch;
+														next_inst_in_delayslot_output <= `InDelaySlot;	
+							  							instvalid <= `InstValid;
+													end	
                                                 `EXE_JR: 
                                                     begin
                                                         wreg_output <= `WriteDisable;
@@ -284,6 +310,15 @@ module ID(
                                                         branch_flag_output <= `Branch;
                                                         next_inst_in_delayslot_output <= `InDelaySlot; 
                                                     end
+                                                `EXE_NOR: 
+                                                	begin 
+							  							wreg_output <= `WriteEnable;
+							  							aluop_output <= `EXE_NOR_OP;
+							  							alusel_output <= `EXE_RES_LOGIC;
+							  							reg1_read_output <= 1'b1;
+							  							reg2_read_output <= 1'b1;
+							  							instvalid <= `InstValid;
+													end
                                                 `EXE_OR:
                                                     begin
                                                         wreg_output <= `WriteEnable;
@@ -293,6 +328,63 @@ module ID(
                                                         reg1_read_output <= 1'b1;
                                                         reg2_read_output <= 1'b1;
                                                     end
+                                                
+                                                `EXE_SLLV: 
+                                                	begin 
+							  							wreg_output <= `WriteEnable;
+							  							aluop_output <= `EXE_SLL_OP;
+							  							alusel_output <= `EXE_RES_SHIFT;
+							  							reg1_read_output <= 1'b1;
+							  							reg2_read_output <= 1'b1;
+							  							instvalid <= `InstValid;
+							  						end
+						  						`EXE_SRLV: 
+							  						begin 
+							  							wreg_output <= `WriteEnable;
+							  							aluop_output <= `EXE_SRL_OP;
+							  							alusel_output <= `EXE_RES_SHIFT;
+							  							reg1_read_output <= 1'b1;
+							  							reg2_read_output <= 1'b1;
+							  							instvalid <= `InstValid;
+							  						end
+						  						`EXE_SRAV: 
+							  						begin 
+							  							wreg_output <= `WriteEnable;
+							  							aluop_output <= `EXE_SRA_OP;
+							  							alusel_output <= `EXE_RES_SHIFT;
+							  							reg1_read_output <= 1'b1;
+							  							reg2_read_output <= 1'b1;
+							  							instvalid <= `InstValid;
+													end	
+                                                
+                                                `EXE_SLT: 
+                                                	begin
+							  							wreg_output <= `WriteEnable;
+							  							aluop_output <= `EXE_SLT_OP;
+							  							alusel_output <= `EXE_RES_ARITHMETIC;
+							  							reg1_read_output <= 1'b1;
+							  							reg2_read_output <= 1'b1;
+							  							instvalid <= `InstValid;
+							  						end
+						  						`EXE_SLTU: 
+						  							begin
+							  							wreg_output <= `WriteEnable;
+							  							aluop_output <= `EXE_SLTU_OP;
+							  							alusel_output <= `EXE_RES_ARITHMETIC;
+							  							reg1_read_output <= 1'b1;
+							  							reg2_read_output <= 1'b1;
+							  							instvalid <= `InstValid;
+													end
+													
+												`EXE_SUBU: 
+													begin
+							  							wreg_output <= `WriteEnable;
+							  							aluop_output <= `EXE_SUBU_OP;
+							  							alusel_output <= `EXE_RES_ARITHMETIC;
+							  							reg1_read_output <= 1'b1;
+							  							reg2_read_output <= 1'b1;
+							  							instvalid <= `InstValid;
+													end
                                                 `EXE_XOR:
                                                     begin
                                                         wreg_output <= `WriteEnable;
@@ -423,6 +515,21 @@ module ID(
                                     end 
 				  				instvalid <= `InstValid;  
                             end
+                        EXE_BLEZ: 
+		                    begin 
+								wreg_output <= `WriteDisable;
+								aluop_output <= `EXE_BLEZ_OP;
+								alusel_output <= `EXE_RES_JUMP_BRANCH;
+								reg1_read_output <= 1'b1;
+								reg2_read_output <= 1'b0;
+								if((reg1_output[31] == 1'b1) || (reg1_output == `ZeroWord)) begin
+									link_addr_output <= `ZeroWord;
+									branch_target_addr_output <= branch_addr;
+									branch_flag_output <= `Branch;
+									next_inst_in_delayslot_output <= `InDelaySlot;
+								end	
+								instvalid <= `InstValid;
+							end
                         `EXE_BNE: 
                             begin
                                 wreg_output <= `WriteDisable;
@@ -439,6 +546,39 @@ module ID(
                                     end 
 				  				instvalid <= `InstValid;  
                             end
+                        `EXE_REGIMM_INST:
+							case (inst_input[20:16]) // bgez bltz
+								`EXE_BGEZ: begin 
+									wreg_output <= `WriteDisable;
+									aluop_output <= `EXE_BGEZ_OP;
+									alusel_output <= `EXE_RES_JUMP_BRANCH;
+									reg1_read_output <= 1'b1;
+									reg2_read_output <= 1'b0;
+									if(reg1_output[31] == 1'b0) begin
+										link_addr_output <= `ZeroWord;
+										branch_target_addr_output <= branch_addr;
+										branch_flag_output <= `Branch;
+										next_inst_in_delayslot_output <= `InDelaySlot;
+									end	
+									instvalid <= `InstValid;
+								end
+								`EXE_BLTZ: begin 
+									wreg_output <= `WriteDisable;
+									aluop_output <= `EXE_BLTZ_OP;
+									alusel_output <= `EXE_RES_JUMP_BRANCH;
+									reg1_read_output <= 1'b1;
+									reg2_read_output <= 1'b0;
+									if(reg1_output[31] == 1'b1) begin
+										link_addr_o <= `ZeroWord;
+										branch_target_addr_output <= branch_addr;
+										branch_flag_output <= `Branch;
+										next_inst_in_delayslot_output <= `InDelaySlot;
+									end	
+									instvalid <= `InstValid;
+								end
+								default: begin 
+								end
+							endcase
                         `EXE_J: 
                             begin
                                 wreg_output <= `WriteDisable;
@@ -478,6 +618,16 @@ module ID(
                                 waddr_output <= inst_input[20: 16]; 
 				  				instvalid <= `InstValid;  
                             end
+                        `EXE_LBU: 
+                        	begin
+								wreg_output <= `WriteEnable;
+								aluop_output <= `EXE_LBU_OP;
+								alusel_output <= `EXE_RES_LOAD_STORE;
+								reg1_read_output <= 1'b1;
+								reg2_read_output <= 1'b0;
+								waddr_output <= inst_input[20: 16];
+								instvalid <= `InstValid;
+							end
                         `EXE_LUI: 			
                             begin 
                                 wreg_output <= `WriteEnable;        
@@ -528,6 +678,28 @@ module ID(
 				  				instvalid <= `InstValid;  
                                 reg2_read_output <= 1'b1;
                             end
+                        `EXE_SLTI: 			
+                        	begin                
+						  		wreg_output <= `WriteEnable;		
+						  		aluop_output <= `EXE_SLT_OP;				
+						  		alusel_output <= `EXE_RES_ARITHMETIC; 
+						  		reg1_read_output <= 1'b1;				
+						  		reg2_read_output <= 1'b0;	  	
+								imm <= {{16{inst_input[15]}}, inst_input[15:0]};		
+								waddr_output <= inst_input[20:16];
+								instvalid <= `InstValid;	
+							end
+						`EXE_SLTIU: 			
+							begin                
+						  		wreg_o <= `WriteEnable;		
+						  		aluop_o <= `EXE_SLTU_OP;				
+						  		alusel_o <= `EXE_RES_ARITHMETIC; 
+						  		reg1_read_o <= 1'b1;				
+						  		reg2_read_o <= 1'b0;	  	
+								imm <= {16'h0, inst_input[15:0]};		
+								waddr_output <= inst_input[20:16];
+								instvalid <= `InstValid;	
+							end
                         `EXE_XORI: 			
                             begin
                                 wreg_output <= `WriteEnable;        
@@ -539,7 +711,15 @@ module ID(
                                 imm <= {16'h0, inst_input[15:0]};    
                                 waddr_output <= inst_input[20:16];  
                             end
-                            
+                        `EXE_CACHE: 
+                        	begin 
+								wreg_output <= `WriteDisable;
+						  		aluop_output <= `EXE_NOP_OP;
+						  		alusel_output <= `EXE_RES_NOP; 
+						  		reg1_read_output <= 1'b0;
+						  		reg2_read_output <= 1'b0;
+								instvalid <= `InstValid;
+							end
                             
                             
                         default:
