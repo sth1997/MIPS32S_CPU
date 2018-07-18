@@ -247,7 +247,7 @@ module ID(
                                                 waddr_output <= inst_input[15: 11];
 				  								instvalid <= `InstValid;
                                             end
-                                        if(op3 == `EXE_SRA) 
+                                        if(inst_input[5:0] == `EXE_SRA) 
 		                                    begin
 									  			wreg_output <= `WriteEnable;
 									  			aluop_output <= `EXE_SRA_OP;
@@ -442,7 +442,17 @@ module ID(
 							  							reg2_read_output <= 1'b1;
 							  							instvalid <= `InstValid;
 													end
-                                                    
+                                                
+                                                `EXE_MULTU: 
+                                                	begin
+							  							wreg_output <= `WriteDisable;
+							  							aluop_output <= `EXE_MULTU_OP;
+							  							// alusel_output <= `EXE_RES_NOP;
+							  							reg1_read_output <= 1'b1;
+							  							reg2_read_output <= 1'b1;
+							  							instvalid <= `InstValid;
+													end
+                                                
                                                 `EXE_SYSCALL: 
                                                 	begin 
 							  							wreg_output <= `WriteDisable;
@@ -515,7 +525,7 @@ module ID(
                                     end 
 				  				instvalid <= `InstValid;  
                             end
-                        EXE_BLEZ: 
+                        `EXE_BLEZ: 
 		                    begin 
 								wreg_output <= `WriteDisable;
 								aluop_output <= `EXE_BLEZ_OP;
@@ -569,7 +579,7 @@ module ID(
 									reg1_read_output <= 1'b1;
 									reg2_read_output <= 1'b0;
 									if(reg1_output[31] == 1'b1) begin
-										link_addr_o <= `ZeroWord;
+										link_addr_output <= `ZeroWord;
 										branch_target_addr_output <= branch_addr;
 										branch_flag_output <= `Branch;
 										next_inst_in_delayslot_output <= `InDelaySlot;
@@ -691,11 +701,11 @@ module ID(
 							end
 						`EXE_SLTIU: 			
 							begin                
-						  		wreg_o <= `WriteEnable;		
-						  		aluop_o <= `EXE_SLTU_OP;				
-						  		alusel_o <= `EXE_RES_ARITHMETIC; 
-						  		reg1_read_o <= 1'b1;				
-						  		reg2_read_o <= 1'b0;	  	
+						  		wreg_output <= `WriteEnable;		
+						  		aluop_output <= `EXE_SLTU_OP;				
+						  		alusel_output <= `EXE_RES_ARITHMETIC; 
+						  		reg1_read_output <= 1'b1;				
+						  		reg2_read_output <= 1'b0;	  	
 								imm <= {16'h0, inst_input[15:0]};		
 								waddr_output <= inst_input[20:16];
 								instvalid <= `InstValid;	

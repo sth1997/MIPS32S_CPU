@@ -78,6 +78,7 @@
 `define EXE_ADDU  6'b100001
 `define EXE_ADDIU  6'b001001
 `define EXE_MULT  6'b011000
+`define EXE_MULTU 6'b011001
 
 `define EXE_J  6'b000010
 `define EXE_JAL  6'b000011
@@ -142,6 +143,7 @@
 `define EXE_ADDU_OP  8'b00100001
 `define EXE_ADDIU_OP  8'b01010110
 `define EXE_MULT_OP  8'b00011000
+`define EXE_MULTU_OP 8'b00011001
 
 `define EXE_J_OP 8'b01001111
 `define EXE_JAL_OP 8'b01010000

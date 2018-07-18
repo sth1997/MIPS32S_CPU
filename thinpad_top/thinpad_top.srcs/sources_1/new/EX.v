@@ -77,7 +77,7 @@ module EX(
 	
 	wire[`RegBus] mult_op1;
 	wire[`RegBus] mult_op2;
-	wire[`DoubleRegBus] hilo_temp;
+	wire[`DoubleRegBus] hilo_temp,hilo_unsigned_temp;
 	reg[`DoubleRegBus] mulres;
 	
 	wire is_ADEL, is_ADES;
@@ -137,6 +137,12 @@ module EX(
 								hi_output <= mulres[63: 32];
 								lo_output <= mulres[31: 0];
 							end
+						`EXE_MULTU_OP:
+							begin
+								whilo_output <= `WriteEnable;
+								hi_output <= mulres[63: 32];
+								lo_output <= mulres[31: 0];
+							end
 						default : 
 							begin
 								whilo_output <= `WriteDisable;
@@ -150,6 +156,7 @@ module EX(
 	assign mult_op1 = (reg1_input[31] == 1'b1)? (~reg1_input + 1): reg1_input;
     assign mult_op2 = (reg2_input[31] == 1'b1)? (~reg2_input + 1): reg2_input;
     assign hilo_temp = mult_op1 * mult_op2;
+    assign hilo_unsigned_temp = reg1_input * reg2_input;
     always @ (*) 
     	begin 
 			if(rst == `RstEnable) 
@@ -166,7 +173,11 @@ module EX(
 						begin
 							mulres <= hilo_temp;
 						end // else
-				end	 // else if 
+				end
+			else if (aluop_input == `EXE_MULTU_OP)
+				begin
+					mulres <= hilo_unsigned_temp;
+				end
 		end // always
 	always @ (*) 
 		begin
