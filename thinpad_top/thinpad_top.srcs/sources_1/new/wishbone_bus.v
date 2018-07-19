@@ -39,7 +39,10 @@ module wishbone_bus(
 
     wire[`RegBus] phy_wb_addr;
     assign phy_wb_addr = (cpu_addr_input[31:22] == 10'b0000000001)?{10'b1001000000, cpu_addr_input[21:0]}:
-                            ((cpu_addr_input[31:22] == 10'b0000000000)?{10'b1000000000, cpu_addr_input[21:0]}:{3'b101, cpu_addr_input[28:0]});
+                            (cpu_addr_input[31:22] == 10'b0000000000)?{10'b1000000000, cpu_addr_input[21:0]}:
+                            (cpu_addr_input[31:23] == 9'b000100000)?{9'b000100000, cpu_addr_input[22:0]}:
+                            (cpu_addr_input[31:23] == 9'b000100001)?{9'b001000000, cpu_addr_input[22:0]}
+                            :{3'b101, cpu_addr_input[28:0]};
 
     always @ (posedge clk) begin
         if(rst == `RstEnable) begin

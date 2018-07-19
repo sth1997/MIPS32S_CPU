@@ -13,7 +13,7 @@ module flash(
     inout   [15:0] flash_dat_io, 
     output wire flash_byte,
     output wire flash_ce,
-    output reg flash_oe,
+    output wire flash_oe,
     output wire flash_rp,
     output wire flash_vpen,
     output wire flash_we
@@ -47,12 +47,16 @@ module flash(
             if (wb_acc) begin
                 waitstate <= waitstate + 4'h1;
             end
-            flash_adr_o <= {wb_adr_i[21:1],1'b0};
+            flash_adr_o <= {wb_adr_i[22:1],1'b0};
         end else begin
             waitstate <= waitstate + 4'h1;
             if (waitstate == 4'he) begin
                 wb_ack_o <= 1'b1;
-                wb_dat_o <= {{16{1'b0}}, flash_dat_io};
+                if (wb_adr_i[1] == 1'b0) begin
+                    wb_dat_o <= {{16{1'b0}}, flash_dat_io};
+                end else begin
+                    wb_dat_o <= {flash_dat_io, {16{1'b0}}};
+                end
             end else if(waitstate == 4'hf) begin
                 waitstate <= 4'h0;
                 wb_ack_o <= 1'b0;

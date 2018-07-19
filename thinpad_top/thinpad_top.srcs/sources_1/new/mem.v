@@ -212,7 +212,7 @@ module mem(
 							mem_sel_output <= 4'b0011;
 						end
 						2'b10: begin
-							wdata_output <= {{16{1'b0}}, mem_data_input[31: 15]};
+							wdata_output <= {{16{1'b0}}, mem_data_input[31: 16]};
 							mem_sel_output <= 4'b1100;
 						end
 						default: begin

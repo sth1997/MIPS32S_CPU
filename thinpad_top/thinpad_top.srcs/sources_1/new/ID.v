@@ -649,6 +649,16 @@ module ID(
                                 waddr_output <= inst_input[20:16]; 
 				  				instvalid <= `InstValid;  
                             end
+                        `EXE_LHU: 
+		                    begin
+								wreg_output <= `WriteEnable;
+								aluop_output <= `EXE_LHU_OP;
+								alusel_output <= `EXE_RES_LOAD_STORE;
+								reg1_read_output <= 1'b1;
+								reg2_read_output <= 1'b0;
+								waddr_output <= inst_input[20: 16];
+								instvalid <= `InstValid;
+							end
                         `EXE_LW:
                             begin
                                 wreg_output <= `WriteEnable;
