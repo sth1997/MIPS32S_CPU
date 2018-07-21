@@ -1,0 +1,5 @@
+#!/bin/sh
+
+../../qemu-thumips/mipsel-softmmu/qemu-system-mipsel -M mipssim -m 32M -serial mon:stdio -bios boot/loader.bin -S -s &
+sleep 1
+mips-sde-elf-gdb
