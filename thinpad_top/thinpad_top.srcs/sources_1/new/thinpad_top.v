@@ -734,22 +734,29 @@ async_transmitter #(.ClkFrequency(50000000),.Baud(9600)) //发�?�模块，96
         .TxD_start(ext_uart_start),    //�??始发送信�??
         .TxD_data(ext_uart_tx)        //待发送的数据
     );
+*/
 
 //图像输出演示，分辨率800x600@75Hz，像素时钟为50MHz
-wire [11:0] hdata;
-assign video_red = hdata < 266 ? 3'b111 : 0; //红色竖条
-assign video_green = hdata < 532 && hdata >= 266 ? 3'b111 : 0; //绿色竖条
-assign video_blue = hdata >= 532 ? 2'b11 : 0; //蓝色竖条
+//wire [11:0] hdata;
+//assign video_red = hdata < 266 ? 3'b111 : 0; //红色竖条
+//assign video_green = hdata < 532 && hdata >= 266 ? 3'b111 : 0; //绿色竖条
+//assign video_blue = hdata >= 532 ? 2'b11 : 0; //蓝色竖条
 assign video_clk = clk_50M;
-vga #(12, 800, 856, 976, 1040, 600, 637, 643, 666, 1, 1) vga800x600at75 (
+wire [7:0] vga_data_input = (serial_we_o)?serial_data_o:serial_data_i;
+vga #(12, 800, 856, 976, 1040, 592, 637, 643, 666, 1, 1) vga800x600at75 (
     .clk(clk_50M), 
-    .hdata(hdata), //横坐�??
+    .rst(rst),
+    .data_from_serial(vga_data_input),
+    .serial_data_enable(serial_cyc_o&serial_stb_o&serial_ack_i&(serial_addr_o == 32'hBFD003F8)),
+    .hdata(), //横坐�??
     .vdata(),      //纵坐�??
+    .red(video_red),
+    .green(video_green),
+    .blue(video_blue),
     .hsync(video_hsync),
     .vsync(video_vsync),
     .data_enable(video_de)
 );
-*/
 /* =========== Demo code end =========== */
 
 endmodule
