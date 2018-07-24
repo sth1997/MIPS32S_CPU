@@ -506,8 +506,9 @@ module ID(
                                         link_addr_output <= `ZeroWord;
                                         branch_target_addr_output <= branch_addr;
                                         branch_flag_output <= `Branch;
-                                        next_inst_in_delayslot_output <= `InDelaySlot;
+                                        
                                     end
+                                next_inst_in_delayslot_output <= `InDelaySlot;
                             end
                         `EXE_BGTZ: 
                             begin
@@ -521,8 +522,9 @@ module ID(
                                         link_addr_output <= `ZeroWord;
                                         branch_target_addr_output <= branch_addr;
                                         branch_flag_output <= `Branch;
-                                        next_inst_in_delayslot_output <= `InDelaySlot;
+                                        
                                     end 
+                                next_inst_in_delayslot_output <= `InDelaySlot;
 				  				instvalid <= `InstValid;  
                             end
                         `EXE_BLEZ: 
@@ -532,12 +534,14 @@ module ID(
 								alusel_output <= `EXE_RES_JUMP_BRANCH;
 								reg1_read_output <= 1'b1;
 								reg2_read_output <= 1'b0;
-								if((reg1_output[31] == 1'b1) || (reg1_output == `ZeroWord)) begin
-									link_addr_output <= `ZeroWord;
-									branch_target_addr_output <= branch_addr;
-									branch_flag_output <= `Branch;
-									next_inst_in_delayslot_output <= `InDelaySlot;
-								end	
+								if((reg1_output[31] == 1'b1) || (reg1_output == `ZeroWord)) 
+                                    begin
+                                        link_addr_output <= `ZeroWord;
+                                        branch_target_addr_output <= branch_addr;
+                                        branch_flag_output <= `Branch;
+                                        
+                                    end	
+                                next_inst_in_delayslot_output <= `InDelaySlot;
 								instvalid <= `InstValid;
 							end
                         `EXE_BNE: 
@@ -552,9 +556,10 @@ module ID(
                                         link_addr_output <= `ZeroWord;
                                         branch_target_addr_output <= branch_addr;
                                         branch_flag_output <= `Branch;
-                                        next_inst_in_delayslot_output <= `InDelaySlot;
+                                        
                                     end 
 				  				instvalid <= `InstValid;  
+				  				next_inst_in_delayslot_output <= `InDelaySlot;
                             end
                         `EXE_REGIMM_INST:
 							case (inst_input[20:16]) // bgez bltz
@@ -568,9 +573,10 @@ module ID(
 										link_addr_output <= `ZeroWord;
 										branch_target_addr_output <= branch_addr;
 										branch_flag_output <= `Branch;
-										next_inst_in_delayslot_output <= `InDelaySlot;
+										
 									end	
 									instvalid <= `InstValid;
+									next_inst_in_delayslot_output <= `InDelaySlot;
 								end
 								`EXE_BLTZ: begin 
 									wreg_output <= `WriteDisable;
@@ -582,9 +588,10 @@ module ID(
 										link_addr_output <= `ZeroWord;
 										branch_target_addr_output <= branch_addr;
 										branch_flag_output <= `Branch;
-										next_inst_in_delayslot_output <= `InDelaySlot;
+										
 									end	
 									instvalid <= `InstValid;
+									next_inst_in_delayslot_output <= `InDelaySlot;
 								end
 								default: begin 
 								end
@@ -716,7 +723,7 @@ module ID(
 						  		alusel_output <= `EXE_RES_ARITHMETIC; 
 						  		reg1_read_output <= 1'b1;				
 						  		reg2_read_output <= 1'b0;	  	
-								imm <= {16'h0, inst_input[15:0]};		
+								imm <= {{16{inst_input[15]}}, inst_input[15:0]};		
 								waddr_output <= inst_input[20:16];
 								instvalid <= `InstValid;	
 							end
