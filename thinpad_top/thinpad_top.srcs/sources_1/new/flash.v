@@ -47,7 +47,7 @@ module flash(
             if (wb_acc) begin
                 waitstate <= waitstate + 4'h1;
             end
-            flash_adr_o <= {wb_adr_i[22:1],1'b0};
+            flash_adr_o <= {wb_adr_i[23:2],1'b0};
         end else begin
             waitstate <= waitstate + 4'h1;
             if (waitstate == 4'he) begin

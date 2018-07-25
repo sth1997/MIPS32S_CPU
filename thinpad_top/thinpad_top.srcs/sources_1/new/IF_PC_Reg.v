@@ -44,7 +44,7 @@ module IF_PC_Reg(
                 end
             if (chip_enable_flag == `ChipDisable) 
                 begin
-                    PC_output <= 32'h90800000;
+                    PC_output <= 32'hBFC00000;
                 end
             else
                 begin

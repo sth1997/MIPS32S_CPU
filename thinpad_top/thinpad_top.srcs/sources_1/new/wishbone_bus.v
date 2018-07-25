@@ -38,11 +38,11 @@ module wishbone_bus(
     reg[`RegBus] rd_buf;
 
     wire[`RegBus] phy_wb_addr;
-    assign phy_wb_addr = (cpu_addr_input[31:22] == 10'b0000000001)?{10'b1001000000, cpu_addr_input[21:0]}:
-                            (cpu_addr_input[31:22] == 10'b0000000000)?{10'b1000000000, cpu_addr_input[21:0]}:
-                            (cpu_addr_input[31:23] == 9'b000100000)?{9'b000100000, cpu_addr_input[22:0]}:
-                            (cpu_addr_input[31:23] == 9'b000100001)?{9'b001000000, cpu_addr_input[22:0]}
-                            :{3'b101, cpu_addr_input[28:0]};
+    assign phy_wb_addr = (cpu_addr_input[31:22] == 10'b0000000001)?{10'b1001000000, cpu_addr_input[21:0]}: //EXTRA RAM
+                            (cpu_addr_input[31:22] == 10'b0000000000)?{10'b1000000000, cpu_addr_input[21:0]}: //BASE RAM
+                            (cpu_addr_input[31:24] == 8'h1e)?{8'h1e, cpu_addr_input[23:0]}: //FLASH
+                            (cpu_addr_input[31:12] == 20'h1fc00)?{20'h2fc00, cpu_addr_input[11:0]} //ROM
+                            :{3'b101, cpu_addr_input[28:0]}; //serial
 
     always @ (posedge clk) begin
         if(rst == `RstEnable) begin
