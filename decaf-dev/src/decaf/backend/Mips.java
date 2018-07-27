@@ -136,8 +136,8 @@ public class Mips implements MachineDescription {
 						tac.op1.reg, tac.op2.reg));
 				break;
 			case MUL:
-				bb.appendAsm(new MipsAsm(MipsAsm.FORMAT3, "mul", tac.op0.reg,
-						tac.op1.reg, tac.op2.reg));
+				bb.appendAsm(new MipsAsm(MipsAsm.FORMAT2, "mult", tac.op1.reg, tac.op2.reg));
+				bb.appendAsm(new MipsAsm(MipsAsm.FORMAT1, "mflo", tac.op0.reg));
 				break;
 			case DIV:
 				bb.appendAsm(new MipsAsm(MipsAsm.FORMAT3, "div", tac.op0.reg,
