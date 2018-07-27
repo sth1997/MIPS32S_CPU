@@ -59,6 +59,20 @@ public final class Intrinsic {
 	public static final Intrinsic HALT = new Intrinsic("_Halt", 0,
 			BaseType.VOID);
 	/**
+	 * 计算除法
+	 * 参数：计算除法的两个源操作数
+	 * 返回：除法得到的结果
+	 * 返回类型：int
+	*/
+	public static final Intrinsic LIB_DIV = new Intrinsic("_LIB_Div", 2, BaseType.INT);
+	/**
+	 * 计算取模
+	 * 参数：计算取模的两个源操作数
+	 * 返回：取模得到的结果
+	 * 返回类型：int
+	*/
+	public static final Intrinsic LIB_REM = new Intrinsic("_LIB_Rem", 2, BaseType.INT);
+	/**
 	 * 函数名字
 	 */
 	public final Label label;

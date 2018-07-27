@@ -73,10 +73,14 @@ public class TransPass2 extends Tree.Visitor {
 			expr.val = tr.genMul(expr.left.val, expr.right.val);
 			break;
 		case Tree.DIV:
-			expr.val = tr.genDiv(expr.left.val, expr.right.val);
+			tr.genParm(expr.left.val);
+			tr.genParm(expr.right.val);
+			expr.val = tr.genIntrinsicCall(Intrinsic.LIB_DIV);
 			break;
 		case Tree.MOD:
-			expr.val = tr.genMod(expr.left.val, expr.right.val);
+			tr.genParm(expr.left.val);
+			tr.genParm(expr.right.val);
+			expr.val = tr.genIntrinsicCall(Intrinsic.LIB_REM);
 			break;
 		case Tree.AND:
 			expr.val = tr.genLAnd(expr.left.val, expr.right.val);
