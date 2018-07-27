@@ -128,11 +128,11 @@ public class Mips implements MachineDescription {
 		for (Tac tac = bb.tacList; tac != null; tac = tac.next) {
 			switch (tac.opc) {
 			case ADD:
-				bb.appendAsm(new MipsAsm(MipsAsm.FORMAT3, "add", tac.op0.reg,
+				bb.appendAsm(new MipsAsm(MipsAsm.FORMAT3, "addu", tac.op0.reg,
 						tac.op1.reg, tac.op2.reg));
 				break;
 			case SUB:
-				bb.appendAsm(new MipsAsm(MipsAsm.FORMAT3, "sub", tac.op0.reg,
+				bb.appendAsm(new MipsAsm(MipsAsm.FORMAT3, "subu", tac.op0.reg,
 						tac.op1.reg, tac.op2.reg));
 				break;
 			case MUL:
@@ -180,7 +180,7 @@ public class Mips implements MachineDescription {
 						tac.op1.reg, tac.op2.reg));
 				break;
 			case NEG:
-				bb.appendAsm(new MipsAsm(MipsAsm.FORMAT2, "neg", tac.op0.reg,
+				bb.appendAsm(new MipsAsm(MipsAsm.FORMAT2, "negu", tac.op0.reg,
 						tac.op1.reg));
 				break;
 			case LNOT:
