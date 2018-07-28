@@ -72,7 +72,9 @@ set rc [catch {
   set_property parent.project_path /home/chenqiuhao/MIPS32S_CPU/thinpad_top/thinpad_top.xpr [current_project]
   set_property ip_output_repo /home/chenqiuhao/MIPS32S_CPU/thinpad_top/thinpad_top.cache/ip [current_project]
   set_property ip_cache_permissions {read write} [current_project]
+  set_property XPM_LIBRARIES XPM_MEMORY [current_project]
   add_files -quiet /home/chenqiuhao/MIPS32S_CPU/thinpad_top/thinpad_top.runs/synth_1/thinpad_top.dcp
+  read_ip -quiet /home/chenqiuhao/MIPS32S_CPU/thinpad_top/thinpad_top.srcs/sources_1/ip/video_char_mem/video_char_mem.xci
   read_xdc /home/chenqiuhao/MIPS32S_CPU/thinpad_top/thinpad_top.srcs/constrs_1/new/thinpad_top.xdc
   link_design -top thinpad_top -part xc7a100tfgg676-2L
   close_msg_db -file init_design.pb
@@ -111,7 +113,7 @@ set rc [catch {
   write_checkpoint -force thinpad_top_placed.dcp
   create_report "impl_1_place_report_io_0" "report_io -file thinpad_top_io_placed.rpt"
   create_report "impl_1_place_report_utilization_0" "report_utilization -file thinpad_top_utilization_placed.rpt -pb thinpad_top_utilization_placed.pb"
-  create_report "impl_1_place_report_control_sets_0" "report_control_sets -verbose -file thinpad_top_control_sets_placed.rpt"
+  create_report "impl_1_place_report_control_sets_0" "report_control_sets -file thinpad_top_control_sets_placed.rpt"
   close_msg_db -file place_design.pb
 } RESULT]
 if {$rc} {
@@ -132,7 +134,7 @@ set rc [catch {
   create_report "impl_1_route_report_methodology_0" "report_methodology -file thinpad_top_methodology_drc_routed.rpt -pb thinpad_top_methodology_drc_routed.pb -rpx thinpad_top_methodology_drc_routed.rpx"
   create_report "impl_1_route_report_power_0" "report_power -file thinpad_top_power_routed.rpt -pb thinpad_top_power_summary_routed.pb -rpx thinpad_top_power_routed.rpx"
   create_report "impl_1_route_report_route_status_0" "report_route_status -file thinpad_top_route_status.rpt -pb thinpad_top_route_status.pb"
-  create_report "impl_1_route_report_timing_summary_0" "report_timing_summary -max_paths 10 -file thinpad_top_timing_summary_routed.rpt -warn_on_violation  -rpx thinpad_top_timing_summary_routed.rpx"
+  create_report "impl_1_route_report_timing_summary_0" "report_timing_summary -file thinpad_top_timing_summary_routed.rpt -warn_on_violation  -rpx thinpad_top_timing_summary_routed.rpx"
   create_report "impl_1_route_report_incremental_reuse_0" "report_incremental_reuse -file thinpad_top_incremental_reuse_routed.rpt"
   create_report "impl_1_route_report_clock_utilization_0" "report_clock_utilization -file thinpad_top_clock_utilization_routed.rpt"
   close_msg_db -file route_design.pb
@@ -150,6 +152,7 @@ start_step write_bitstream
 set ACTIVE_STEP write_bitstream
 set rc [catch {
   create_msg_db write_bitstream.pb
+  set_property XPM_LIBRARIES XPM_MEMORY [current_project]
   catch { write_mem_info -force thinpad_top.mmi }
   write_bitstream -force thinpad_top.bit 
   catch {write_debug_probes -quiet -force thinpad_top}

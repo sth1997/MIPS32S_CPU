@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="impl_1" LaunchPart="xc7a100tfgg676-2L" LaunchTime="1530629350">
+<GenRun Id="impl_1" LaunchPart="xc7a100tfgg676-2L" LaunchTime="1532245639">
   <File Type="WBT-USG" Name="usage_statistics_webtalk.html"/>
   <File Type="BG-DRC" Name="thinpad_top.drc"/>
   <File Type="BG-BGN" Name="thinpad_top.bgn"/>
@@ -26,46 +26,123 @@
   <File Type="ROUTE-STATUS-PB" Name="thinpad_top_route_status.pb"/>
   <File Type="ROUTE-STATUS" Name="thinpad_top_route_status.rpt"/>
   <File Type="ROUTE-PWR-RPX" Name="thinpad_top_power_routed.rpx"/>
-  <File Type="INIT-TIMING" Name="thinpad_top_timing_summary_init.rpt"/>
-  <File Type="OPT-DRC" Name="thinpad_top_drc_opted.rpt"/>
-  <File Type="OPT-DCP" Name="thinpad_top_opt.dcp"/>
-  <File Type="OPT-METHODOLOGY-DRC" Name="thinpad_top_methodology_drc_opted.rpt"/>
+  <File Type="ROUTE-PWR-SUM" Name="thinpad_top_power_summary_routed.pb"/>
+  <File Type="ROUTE-PWR" Name="thinpad_top_power_routed.rpt"/>
+  <File Type="ROUTE-METHODOLOGY-DRC-PB" Name="thinpad_top_methodology_drc_routed.pb"/>
+  <File Type="ROUTE-METHODOLOGY-DRC-RPX" Name="thinpad_top_methodology_drc_routed.rpx"/>
+  <File Type="ROUTE-METHODOLOGY-DRC" Name="thinpad_top_methodology_drc_routed.rpt"/>
+  <File Type="ROUTE-DRC-RPX" Name="thinpad_top_drc_routed.rpx"/>
+  <File Type="ROUTE-DRC-PB" Name="thinpad_top_drc_routed.pb"/>
+  <File Type="ROUTE-DRC" Name="thinpad_top_drc_routed.rpt"/>
+  <File Type="ROUTE-BLACKBOX-DCP" Name="thinpad_top_routed_bb.dcp"/>
+  <File Type="ROUTE-DCP" Name="thinpad_top_routed.dcp"/>
+  <File Type="ROUTE-ERROR-DCP" Name="thinpad_top_routed_error.dcp"/>
+  <File Type="PHYSOPT-TIMING" Name="thinpad_top_timing_summary_physopted.rpt"/>
+  <File Type="PHYSOPT-DRC" Name="thinpad_top_drc_physopted.rpt"/>
+  <File Type="PHYSOPT-DCP" Name="thinpad_top_physopt.dcp"/>
+  <File Type="POSTPLACE-PWROPT-TIMING" Name="thinpad_top_timing_summary_postplace_pwropted.rpt"/>
+  <File Type="POSTPLACE-PWROPT-DCP" Name="thinpad_top_postplace_pwropt.dcp"/>
+  <File Type="PLACE-TIMING" Name="thinpad_top_timing_summary_placed.rpt"/>
   <File Type="PLACE-PRE-SIMILARITY" Name="thinpad_top_incremental_reuse_pre_placed.rpt"/>
-  <File Type="OPT-HWDEF" Name="thinpad_top.hwdef"/>
-  <File Type="OPT-TIMING" Name="thinpad_top_timing_summary_opted.rpt"/>
-  <File Type="REPORTS-TCL" Name="thinpad_top_reports.tcl"/>
-  <File Type="PWROPT-DCP" Name="thinpad_top_pwropt.dcp"/>
-  <File Type="PWROPT-DRC" Name="thinpad_top_drc_pwropted.rpt"/>
+  <File Type="PLACE-SIMILARITY" Name="thinpad_top_incremental_reuse_placed.rpt"/>
+  <File Type="PLACE-CTRL" Name="thinpad_top_control_sets_placed.rpt"/>
+  <File Type="PLACE-UTIL-PB" Name="thinpad_top_utilization_placed.pb"/>
+  <File Type="PLACE-UTIL" Name="thinpad_top_utilization_placed.rpt"/>
+  <File Type="PLACE-CLK" Name="thinpad_top_clock_utilization_placed.rpt"/>
+  <File Type="PLACE-IO" Name="thinpad_top_io_placed.rpt"/>
   <File Type="RDI-RDI" Name="thinpad_top.vdi"/>
   <File Type="PWROPT-TIMING" Name="thinpad_top_timing_summary_pwropted.rpt"/>
-  <File Type="PLACE-IO" Name="thinpad_top_io_placed.rpt"/>
-  <File Type="PA-TCL" Name="thinpad_top.tcl"/>
+  <File Type="PWROPT-DRC" Name="thinpad_top_drc_pwropted.rpt"/>
+  <File Type="OPT-TIMING" Name="thinpad_top_timing_summary_opted.rpt"/>
+  <File Type="OPT-HWDEF" Name="thinpad_top.hwdef"/>
+  <File Type="OPT-METHODOLOGY-DRC" Name="thinpad_top_methodology_drc_opted.rpt"/>
+  <File Type="OPT-DRC" Name="thinpad_top_drc_opted.rpt"/>
+  <File Type="OPT-DCP" Name="thinpad_top_opt.dcp"/>
+  <File Type="INIT-TIMING" Name="thinpad_top_timing_summary_init.rpt"/>
+  <File Type="PWROPT-DCP" Name="thinpad_top_pwropt.dcp"/>
+  <File Type="REPORTS-TCL" Name="thinpad_top_reports.tcl"/>
   <File Type="PLACE-DCP" Name="thinpad_top_placed.dcp"/>
-  <File Type="PLACE-CLK" Name="thinpad_top_clock_utilization_placed.rpt"/>
-  <File Type="PLACE-TIMING" Name="thinpad_top_timing_summary_placed.rpt"/>
-  <File Type="PLACE-UTIL" Name="thinpad_top_utilization_placed.rpt"/>
-  <File Type="POSTPLACE-PWROPT-TIMING" Name="thinpad_top_timing_summary_postplace_pwropted.rpt"/>
-  <File Type="PLACE-UTIL-PB" Name="thinpad_top_utilization_placed.pb"/>
-  <File Type="PHYSOPT-TIMING" Name="thinpad_top_timing_summary_physopted.rpt"/>
-  <File Type="PLACE-CTRL" Name="thinpad_top_control_sets_placed.rpt"/>
-  <File Type="PLACE-SIMILARITY" Name="thinpad_top_incremental_reuse_placed.rpt"/>
-  <File Type="POSTPLACE-PWROPT-DCP" Name="thinpad_top_postplace_pwropt.dcp"/>
-  <File Type="PHYSOPT-DCP" Name="thinpad_top_physopt.dcp"/>
-  <File Type="PHYSOPT-DRC" Name="thinpad_top_drc_physopted.rpt"/>
-  <File Type="ROUTE-ERROR-DCP" Name="thinpad_top_routed_error.dcp"/>
-  <File Type="ROUTE-DCP" Name="thinpad_top_routed.dcp"/>
-  <File Type="ROUTE-BLACKBOX-DCP" Name="thinpad_top_routed_bb.dcp"/>
-  <File Type="ROUTE-DRC" Name="thinpad_top_drc_routed.rpt"/>
-  <File Type="ROUTE-METHODOLOGY-DRC" Name="thinpad_top_methodology_drc_routed.rpt"/>
-  <File Type="ROUTE-DRC-PB" Name="thinpad_top_drc_routed.pb"/>
-  <File Type="ROUTE-METHODOLOGY-DRC-PB" Name="thinpad_top_methodology_drc_routed.pb"/>
-  <File Type="ROUTE-DRC-RPX" Name="thinpad_top_drc_routed.rpx"/>
-  <File Type="ROUTE-PWR" Name="thinpad_top_power_routed.rpt"/>
-  <File Type="ROUTE-METHODOLOGY-DRC-RPX" Name="thinpad_top_methodology_drc_routed.rpx"/>
-  <File Type="ROUTE-PWR-SUM" Name="thinpad_top_power_summary_routed.pb"/>
+  <File Type="PA-TCL" Name="thinpad_top.tcl"/>
   <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
     <Filter Type="Srcs"/>
+    <File Path="$PSRCDIR/sources_1/new/CONST.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/CPU_TOP.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/EX.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/EX2MEM.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/ID.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/ID_EX.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/IF2ID.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/IF_PC_Reg.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/MEM2WB.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/Reg_Dir.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
     <File Path="$PSRCDIR/sources_1/new/SEG7_LUT.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/SERIAL.v">
       <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="implementation"/>
@@ -79,6 +156,55 @@
         <Attr Name="UsedIn" Val="simulation"/>
       </FileInfo>
     </File>
+    <File Path="$PSRCDIR/sources_1/new/cp0.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/ctrl.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/flash.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/mem.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/mmu.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/rom.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/sram.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
     <File Path="$PSRCDIR/sources_1/new/vga.v">
       <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
@@ -86,10 +212,107 @@
         <Attr Name="UsedIn" Val="simulation"/>
       </FileInfo>
     </File>
+    <File Path="$PSRCDIR/sources_1/new/vir2phy.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/wb_conmax/wb_conmax_defines.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/wb_conmax/wb_conmax_arb.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/wb_conmax/wb_conmax_master_if.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/wb_conmax/wb_conmax_msel.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/wb_conmax/wb_conmax_pri_dec.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/wb_conmax/wb_conmax_pri_enc.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/wb_conmax/wb_conmax_rf.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/wb_conmax/wb_conmax_slave_if.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/wb_conmax/wb_conmax_top.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/wishbone_bus.v">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/Font_Rom.vhd">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
     <File Path="$PSRCDIR/sources_1/new/thinpad_top.v">
       <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/clk_master.v">
+      <FileInfo>
+        <Attr Name="AutoDisabled" Val="1"/>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PSRCDIR/sources_1/new/boot.data">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="simulation"/>
       </FileInfo>
     </File>
@@ -123,4 +346,5 @@
     <Step Id="post_route_phys_opt_design"/>
     <Step Id="write_bitstream"/>
   </Strategy>
+  <BlockFileSet Type="BlockSrcs" Name="video_char_mem"/>
 </GenRun>
