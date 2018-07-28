@@ -668,7 +668,7 @@ load_icode(int fd, int argc, char **kargv) {
         }
         unsigned char *from = ph->p_offset;
         size_t off, size;
-        uintptr_t start = ph->p_va, end, la = ROUNDDOWN_2N(start, PGSIZE);
+        uintptr_t start = ph->p_va, end, la = ROUNDDOWN_2N(start, PGSHIFT);
 
         ret = -E_NO_MEM;
 

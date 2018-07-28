@@ -305,10 +305,8 @@ public class Mips implements MachineDescription {
 			emitTrace(graph.getBlock(bb.next[0]), graph);
 			break;
 		case BY_RETURN:
-			if (bb.var != null) {
-				emit(null, String.format(MipsAsm.FORMAT2, "move", "$v0",
-						bb.varReg), null);
-			}
+			emit(null, String.format(MipsAsm.FORMAT2, "move", "$v0",
+						bb.var == null ? "$zero" : bb.varReg), null);
 			emit(null, String.format(MipsAsm.FORMAT2, "move", "$sp", "$fp"),
 					null);
 			emit(null, String.format(MipsAsm.FORMAT2, "lw", "$ra", "-4($fp)"),

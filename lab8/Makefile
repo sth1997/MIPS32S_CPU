@@ -67,12 +67,12 @@ INCLUDES  := $(addprefix -I,$(SRC_DIR))
 INCLUDES  += -I$(SRCDIR)/include
 
 ifeq  ($(ON_FPGA), y)
-USER_APPLIST:= pwd cat sh ls forktest yield hello faultreadkernel faultread badarg pgdir exit sleep
+USER_APPLIST:= pwd cat sh ls forktest yield hello faultreadkernel faultread badarg pgdir exit sleep math blackjack
 INITRD_BLOCK_CNT:=4000 
 FPGA_LD_FLAGS += -S
 MACH_DEF := -DMACH_FPGA
 else
-USER_APPLIST:= pwd cat sh ls forktest yield hello faultreadkernel faultread badarg pgdir exit sleep
+USER_APPLIST:= pwd cat sh ls forktest yield hello faultreadkernel faultread badarg pgdir exit sleep math blackjack
 # 2M
 INITRD_BLOCK_CNT:=4000 
 MACH_DEF := -DMACH_QEMU
@@ -89,6 +89,7 @@ USER_LIB_SRCDIR := $(USER_SRCDIR)/libs
 USER_LIB_SRC := $(foreach sdir,$(USER_LIB_SRCDIR),$(wildcard $(sdir)/*.c))
 USER_LIB_OBJ := $(patsubst $(USER_LIB_SRCDIR)/%.c, $(USER_LIB_OBJDIR)/%.o, $(USER_LIB_SRC))
 USER_LIB_OBJ += $(USER_LIB_OBJDIR)/initcode.o
+USER_LIB_OBJ += $(USER_LIB_OBJDIR)/entry.o
 USER_LIB    := $(USER_OBJDIR)/libuser.a
 
 BUILD_DIR   += $(USER_LIB_OBJDIR)
