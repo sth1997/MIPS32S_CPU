@@ -2,7 +2,7 @@ EMPTY	:=
 SPACE	:= $(EMPTY) $(EMPTY)
 SLASH	:= /
 
-ON_FPGA :=n
+ON_FPGA :=y
 
 V       := @
 
@@ -67,8 +67,8 @@ INCLUDES  := $(addprefix -I,$(SRC_DIR))
 INCLUDES  += -I$(SRCDIR)/include
 
 ifeq  ($(ON_FPGA), y)
-USER_APPLIST:= sh ls 
-INITRD_BLOCK_CNT:=500 
+USER_APPLIST:= pwd cat sh ls forktest yield hello faultreadkernel faultread badarg pgdir exit sleep
+INITRD_BLOCK_CNT:=4000 
 FPGA_LD_FLAGS += -S
 MACH_DEF := -DMACH_FPGA
 else
