@@ -47,7 +47,7 @@ char* myReadLine() {
             index --;
         }
         else if (c == '\n' || c == '\r') { //new line
-            cprintf("%c", c);
+            cprintf("\n\r");
             bufPtr[index] = '\0';
             break;
         }
