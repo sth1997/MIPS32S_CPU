@@ -19,8 +19,7 @@ void* myAlloc(int size) {
 }
 
 char* myReadLine() {
-    static char buffer[BUFSIZE];
-    static char* bufPtr = buffer;
+    static char bufPtr[BUFSIZE];
     int ret, index = 0;
     while (1) {
         char c;
@@ -41,25 +40,25 @@ char* myReadLine() {
             cprintf("%c", c);
             bufPtr[index ++] = c;
         }
-        else if (c == '\b' && index > 0) {
+        else if (c == '\b' && index > 0) { //backspace
             cprintf("%c", c);
             index --;
         }
-        else if (c == '\n' || c == '\r') {
+        else if (c == '\n' || c == '\r') { //new line
             cprintf("%c", c);
             bufPtr[index] = '\0';
             break;
         }
     }
-    return bufPtr - index - 1;
+    return bufPtr;
 }
 
 int myReadInteger() {
     char *str = myReadLine();
     int ret = 0;
     while (*str) {
-        ret = (ret << 3) + (ret << 1) + (*str - '0');
-        str ++;
+        ret = (ret << 3) + (ret << 1) + (*str - '0'); // ret = ret*10 + *str-'0'
+        str++;
     }
     return ret;
 }
