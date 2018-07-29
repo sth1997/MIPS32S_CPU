@@ -19,7 +19,9 @@ void* myAlloc(int size) {
 }
 
 char* myReadLine() {
-    static char bufPtr[BUFSIZE];
+    static char total_buffer[BUFSIZE];
+    static last_pos = 0;
+    char* bufPtr = total_buffer + last_pos;
     int ret, index = 0;
     while (1) {
         char c;
@@ -50,6 +52,7 @@ char* myReadLine() {
             break;
         }
     }
+    last_pos += index + 1;
     return bufPtr;
 }
 
