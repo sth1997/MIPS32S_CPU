@@ -67,8 +67,8 @@ INCLUDES  := $(addprefix -I,$(SRC_DIR))
 INCLUDES  += -I$(SRCDIR)/include
 
 ifeq  ($(ON_FPGA), y)
-USER_APPLIST:= pwd cat sh ls forktest yield hello math blackjack
-INITRD_BLOCK_CNT:=4000 
+USER_APPLIST:= sh ls math
+INITRD_BLOCK_CNT:=800 
 FPGA_LD_FLAGS += -S
 MACH_DEF := -DMACH_FPGA
 else
