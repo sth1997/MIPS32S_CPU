@@ -13,8 +13,8 @@
 // VSPP: vertical synchro pulse polarity (0 - negative, 1 - positive)
 //
 `define H_CHAR_NUM 100
-`define V_CHAR_NUM 37
-`define FLUSH_STEP 10
+`define V_CHAR_NUM 6'b100000
+`define FLUSH_STEP 5
 module vga
 #(parameter WIDTH = 0, HSIZE = 0, HFP = 0, HSP = 0, HMAX = 0, VSIZE = 0, VFP = 0, VSP = 0, VMAX = 0, HSPP = 0, VSPP = 0)
 (
@@ -46,7 +46,7 @@ always @ (posedge clk) begin
         if (data_from_serial == 8'h0A) begin
             endline[char_pos_line] <= char_pos_column;
             char_pos_column <= 7'b0000000;
-            if (char_pos_line == (startline + `V_CHAR_NUM - 1)) begin
+            if (char_pos_line == (startline + `V_CHAR_NUM - 6'b000001)) begin
                 char_pos_line <= char_pos_line + 1;
                 startline <= startline + `FLUSH_STEP;
             end else begin
@@ -60,7 +60,7 @@ always @ (posedge clk) begin
             if (char_pos_column == (`H_CHAR_NUM - 1)) begin
                 endline[char_pos_line] <= char_pos_column;
                 char_pos_column <= 7'b0000000;
-                if (char_pos_line == (startline + `V_CHAR_NUM - 1)) begin
+                if (char_pos_line == (startline + `V_CHAR_NUM - 6'b000001)) begin
                     char_pos_line <= char_pos_line + 1;
                     startline <= startline + `FLUSH_STEP;
                 end else begin

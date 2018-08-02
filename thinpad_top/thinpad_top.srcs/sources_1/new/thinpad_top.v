@@ -747,7 +747,7 @@ vga #(12, 800, 856, 976, 1040, 592, 637, 643, 666, 1, 1) vga800x600at75 (
     .clk(clk_50M), 
     .rst(rst),
     .data_from_serial(vga_data_input),
-    .serial_data_enable(serial_cyc_o&serial_stb_o&serial_ack_i&(serial_addr_o == 32'hBFD003F8)),
+    .serial_data_enable(serial_we_o&serial_cyc_o&serial_stb_o&serial_ack_i&(serial_addr_o == 32'hBFD003F8)),
     .hdata(), //横坐�??
     .vdata(),      //纵坐�??
     .red(video_red),
